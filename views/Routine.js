@@ -10,6 +10,16 @@ var {
   Component
 } = React;
 
-
+class Routine extends Component {
+  render() {
+    return (
+      <View>
+        <Text>
+          Welcome to Bench Pro!
+        </Text>
+      </View>
+    );
+  }
+}
 
 module.exports = Routine;
