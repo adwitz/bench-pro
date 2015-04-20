@@ -1,6 +1,11 @@
 'use strict';
 
 var React = require('react-native');
+var Routine = require('./Routine');
+var Stats = require('./Stats');
+var OneRepMax = require('./OneRepMax');
+var Settings = require('./Settings');
+
 var {
   AppRegistry,
   StyleSheet,
@@ -12,31 +17,29 @@ var {
   TouchableHighlight
 } = React;
 
-var Routine = require('./Routine');
-
 class SquareButtons extends Component {
   constructor(props) {
     super(props)
   }
-  navigate() {
+  navigate(button) {
     console.log('called navigate');
     this.props.navigator.push({
-      title: 'Routine',
-      component: Routine
+      title: button.title,
+      component: button.view
     })
   }
   render() {
-    var leftText = this.props.titles[0];
-    var rightText = this.props.titles[1];
+    var leftButton = this.props.pages[0];
+    var rightButton = this.props.pages[1];
     return (
       <View style={styles.flowRight}>
-        <TouchableHighlight onPress={this.navigate.bind(this)} style={[styles.squareButton, styles.leftButton]}
+        <TouchableHighlight onPress={() => this.navigate(leftButton)} style={[styles.squareButton, styles.leftButton]}
             underlayColor='#99d9f4'>
-          <Text style={styles.buttonText}>{leftText}</Text>
+          <Text style={styles.buttonText}>{leftButton.title}</Text>
         </TouchableHighlight>
-        <TouchableHighlight style={[styles.squareButton, styles.rightButton]}
+        <TouchableHighlight onPress={() => this.navigate(rightButton)} style={[styles.squareButton, styles.rightButton]}
             underlayColor='#99d9f4'>
-          <Text style={styles.buttonText}>{rightText}</Text>
+          <Text style={styles.buttonText}>{rightButton.title}</Text>
         </TouchableHighlight>
       </View>
     );
@@ -47,8 +50,8 @@ class Home extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      top: ['Set One Rep Max', 'Workouts'],
-      bottom: ['History', 'Settings']
+      top: [{title: 'Set One Rep Max', view: OneRepMax}, {title: 'Workouts', view: Routine}],
+      bottom: [{title: 'Stats', view: Stats}, {title: 'Settings', view: Settings}]
     }
   }
   render() {
@@ -64,19 +67,10 @@ class Home extends Component {
           Get stronger.
         </Text>
         <Text style={styles.instructions}>
-          Be awesomeer.
+          Be awesomer.
         </Text>
-        <View style={styles.flowRight}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder='Search via name or postcode'/>
-          <TouchableHighlight style={styles.button}
-            underlayColor='#99d9f4'>
-            <Text style={styles.buttonText}>Go</Text>
-          </TouchableHighlight>
-        </View>
-        <SquareButtons titles={this.state.top} navigator={this.props.navigator}/>
-        <SquareButtons titles={this.state.bottom}/>
+        <SquareButtons pages={this.state.top} navigator={this.props.navigator}/>
+        <SquareButtons pages={this.state.bottom} navigator={this.props.navigator}/>
       </View>
     );
   }
