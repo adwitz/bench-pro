@@ -25,12 +25,16 @@ class SquareNavButtons extends Component {
     var rightButton = this.props.pages[1];
     return (
       <View style={styles.flowRight}>
-        <TouchableHighlight onPress={() => this.navigate(leftButton)} style={[styles.squareButton, styles.leftButton]}
-            underlayColor='#99d9f4'>
+        <TouchableHighlight
+          onPress={() => this.navigate(leftButton)}
+          style={[styles.squareButton, styles.leftButton]}
+          underlayColor='#99d9f4'>
           <Text style={styles.buttonText}>{leftButton.title}</Text>
         </TouchableHighlight>
-        <TouchableHighlight onPress={() => this.navigate(rightButton)} style={[styles.squareButton, styles.rightButton]}
-            underlayColor='#99d9f4'>
+        <TouchableHighlight
+          onPress={() => this.navigate(rightButton)}
+          style={[styles.squareButton, styles.rightButton]}
+          underlayColor='#99d9f4'>
           <Text style={styles.buttonText}>{rightButton.title}</Text>
         </TouchableHighlight>
       </View>

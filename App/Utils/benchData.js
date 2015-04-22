@@ -1,3 +1,5 @@
+'use strict';
+
 var benchData = {
   getRegimen(weight){
     weight = weight.trim();
