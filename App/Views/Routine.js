@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var benchData = require('../Utils/benchData.js');
+var storage = require('../Utils/storage.js');
 var {
   AppRegistry,
   StyleSheet,

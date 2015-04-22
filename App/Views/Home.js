@@ -5,46 +5,16 @@ var Routine = require('./Routine');
 var Stats = require('./Stats');
 var OneRepMax = require('./OneRepMax');
 var Settings = require('./Settings');
+var SquareNavButtons = require('./../Components/SquareNavButtons')
 
 var {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   Component,
   TextInput,
   TouchableHighlight
 } = React;
-
-class SquareButtons extends Component {
-  constructor(props) {
-    super(props)
-  }
-  navigate(button) {
-    console.log('called navigate');
-    this.props.navigator.push({
-      title: button.title,
-      component: button.view
-    })
-  }
-  render() {
-    var leftButton = this.props.pages[0];
-    var rightButton = this.props.pages[1];
-    return (
-      <View style={styles.flowRight}>
-        <TouchableHighlight onPress={() => this.navigate(leftButton)} style={[styles.squareButton, styles.leftButton]}
-            underlayColor='#99d9f4'>
-          <Text style={styles.buttonText}>{leftButton.title}</Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={() => this.navigate(rightButton)} style={[styles.squareButton, styles.rightButton]}
-            underlayColor='#99d9f4'>
-          <Text style={styles.buttonText}>{rightButton.title}</Text>
-        </TouchableHighlight>
-      </View>
-    );
-  }
-}
 
 class Home extends Component {
   constructor(props) {
@@ -69,8 +39,8 @@ class Home extends Component {
         <Text style={styles.instructions}>
           Be awesomer.
         </Text>
-        <SquareButtons pages={this.state.top} navigator={this.props.navigator}/>
-        <SquareButtons pages={this.state.bottom} navigator={this.props.navigator}/>
+        <SquareNavButtons pages={this.state.top} navigator={this.props.navigator}/>
+        <SquareNavButtons pages={this.state.bottom} navigator={this.props.navigator}/>
       </View>
     );
   }
