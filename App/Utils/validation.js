@@ -1,4 +1,4 @@
-'use strict':
+'use strict';
 
 var validation = {
   weightIsDivisbleByFive(weight){
@@ -16,16 +16,15 @@ var validation = {
     return weight <= 550 ? true : false;
   },
   weightIsValid(weight){
-    weight = Number(weight);
+    weight = Number(weight.trim());
     if (this.weightIsDivisbleByFive(weight) && this.weightIsWithinRange(weight)){
       return true;
     }
     return false;
   },
   getErrorMessage(weight){
-    weight = Number(weight);
+    weight = Number(weight.trim());
     var messages = [];
-    console.log(typeof weight);
     if (!this.weightIsGreaterThanMin(weight)){
       messages.push('greater than 100lbs');
     }

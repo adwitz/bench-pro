@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var validation = require('./../Utils/validation');
+var storage = require('./../Utils/storage');
 
 var {
   StyleSheet,
@@ -26,23 +27,46 @@ class SetOneRepMax extends Component {
     });
   }
   handleSubmit(){
-    console.log('handling submit: ', this.state.weight);
+    var weight = this.state.weight;
     if (validation.weightIsValid(this.state.weight)){
-      //add to async storage and show success
-      this.setState({
-        error: false
-      });
-      console.log('inside success');
-
+      storage.setOneRepMax(weight)
+        .then(() => this.saveOneRepMaxSuccess())
+        .catch(() => this.saveOneRepMaxError())
+        .done();
     } else {
       this.setState({
         error: validation.getErrorMessage(this.state.weight)
       })
     }
   }
+  saveOneRepMaxSuccess(){
+    this.clearErrorState();
+    this.setSuccessState('One rep max saved!');
+  }
+  saveOneRepMaxError(){
+    console.log('failed to save 1rm');
+  }
+  clearErrorState(){
+    this.setState({
+      error: false
+    })
+  }
+  setSuccessState(message){
+    this.setState({
+      success: message
+    });
+  }
+  clearSuccessState(){
+    this.setState({
+      succes: false
+    })
+  }
   render() {
     var showErr = (
-      this.state.error ? <Text style={styles.error}> {this.state.error} </Text> : <View></View>
+      this.state.error ? <Text style={[styles.messages, styles.error]}> {this.state.error} </Text> : <View></View>
+    );
+    var showSuccess = (
+      this.state.success ? <Text style={[styles.messages, styles.success]}> {this.state.success} </Text> : <View></View>
     );
     return (
       <View style={styles.container}>
@@ -62,6 +86,7 @@ class SetOneRepMax extends Component {
           </TouchableHighlight>
         </View>
         {showErr}
+        {showSuccess}
       </View>
     );
   }
@@ -107,10 +132,15 @@ var styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center'
   },
-  error: {
+  messages: {
     fontSize: 18,
-    color: 'red',
     textAlign: 'center'
+  },
+  error: {
+    color: 'red',
+  },
+  success: {
+    color: 'green'
   }
 });
 

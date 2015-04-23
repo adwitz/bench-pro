@@ -1,28 +1,37 @@
 'use strict';
 
 var React = require('react-native');
+var asyncStorage = require('./asyncStorage');
 
-var {
-  AsyncStorage
-} = React;
-
-var storage = {
+var data = {
   setOneRepMax(weight){
-    AsyncStorage.setItem('oneRepMax', weight.trim())
+    weight = weight.trim();
+    this.addToOneRepMaxHistory(weight);
+    return asyncStorage.setOneRepMax(JSON.stringify(weight)));
   },
   addToOneRepMaxHistory(weight){
-    this.getOneRepMaxHistory()
+    weight = Number(weight);
+    asyncStorage.getOneRepMaxHistory()
       .then((arr) => {
-        var weights = JSON.parse(arr);
-        weights.push(weight);
-        AsyncStorage.setItem('oneRepMaxHistory', JSON.stringify(weights));
+        var history = JSON.parse(arr);
+        if (history){
+          history.push(weight);
+        } else {
+          history = [weight];
+        }
+        asyncStorage.setOneRepMaxHistory(weights);
+      })
+      .done();
+  }
+  logLastWorkout(workout){
+    var history = this.getWorkoutLog()
+      .then((data) => {
+        data = JSON.parse(data);
+        data[workout.id] = workout;
+        this.updateWorkoutLog(data);
+        this.setLastCompletedWorkoutIndex(workout.id);
       }).done();
-  },
-  getOneRepMaxHistory(){
-    AsyncStorage.getItem('oneRepMaxHistory')
-      // .then((value) => value))
-      // .done();
-  },
+  }
 
 };
 

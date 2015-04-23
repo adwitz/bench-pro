@@ -26,10 +26,9 @@ var styles = StyleSheet.create({
 
 class Routine extends Component {
   constructor(props){
-    super(props)
-      benchData.getRegimen('100').then((res) => {
+    super(props);
+    benchData.getRegimen(oneRepMax).then((res) => {
       this.setState({isLoading: false});
-      console.log('sucess');
     });
     this.state = {
       isLoading: true
