@@ -6,7 +6,7 @@ var {
   AsyncStorage
 } = React;
 
-var storage = {
+var asyncStorage = {
   getOneRepMax(){
     return AsyncStorage.getItem('oneRepMax');
   },
@@ -18,12 +18,12 @@ var storage = {
   },
   setOneRepMaxHistory(history){
     return AsyncStorage.setItem('oneRepMaxHistory', JSON.stringify(history));
-  }
-  updateWorkoutLog(history){
-    return AsyncStorage.setItem('workoutLog', JSON.stringify(history));
+  },
+  setRegimen(regimen){
+    return AsyncStorage.setItem('regimen', JSON.stringify(regimen));
   },
   getWorkoutLog(){
-    return AysncStorage.getItem('workoutLog');
+    return AysncStorage.getItem('regimen');
   },
   setLastCompletedWorkoutIndex(workoutNumber){
     return AsyncStorage.setItem('lastCompleted', JSON.stringify(workoutNumber));

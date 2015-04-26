@@ -28,23 +28,27 @@ class SetOneRepMax extends Component {
   }
   handleSubmit(){
     var weight = this.state.weight;
-    if (validation.weightIsValid(this.state.weight)){
+    if (validation.weightIsValid(weight)){
       storage.setOneRepMax(weight)
-        .then(() => this.saveOneRepMaxSuccess())
-        .catch(() => this.saveOneRepMaxError())
+        .then(() => this.saveOneRepMaxSuccess(weight))
         .done();
     } else {
-      this.setState({
-        error: validation.getErrorMessage(this.state.weight)
-      })
+      this.setErrorState(validation.getErrorMessage(this.state.weight));
     }
   }
-  saveOneRepMaxSuccess(){
-    this.clearErrorState();
+  saveOneRepMaxSuccess(weight){
+    console.log('saved 1rm ');
     this.setSuccessState('One rep max saved!');
+    storage.setRegimenForOneRepMax(weight);
   }
-  saveOneRepMaxError(){
-    console.log('failed to save 1rm');
+  saveOneRepMaxError(err){
+    console.log('failed to save 1rm: ', err);
+  }
+  setErrorState(message){
+    this.setState({
+      error: message,
+      success: false
+    })
   }
   clearErrorState(){
     this.setState({
@@ -53,12 +57,13 @@ class SetOneRepMax extends Component {
   }
   setSuccessState(message){
     this.setState({
+      error: false,
       success: message
     });
   }
   clearSuccessState(){
     this.setState({
-      succes: false
+      success: false
     })
   }
   render() {
