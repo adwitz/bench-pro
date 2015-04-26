@@ -19,11 +19,11 @@ var asyncStorage = {
   setOneRepMaxHistory(history){
     return AsyncStorage.setItem('oneRepMaxHistory', JSON.stringify(history));
   },
-  setRegimen(regimen){
-    return AsyncStorage.setItem('regimen', JSON.stringify(regimen));
+  setRoutine(routine){
+    return AsyncStorage.setItem('routine', JSON.stringify(routine));
   },
   getWorkoutLog(){
-    return AysncStorage.getItem('regimen');
+    return AysncStorage.getItem('routine');
   },
   setLastCompletedWorkoutIndex(workoutNumber){
     return AsyncStorage.setItem('lastCompleted', JSON.stringify(workoutNumber));

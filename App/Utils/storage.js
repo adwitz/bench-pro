@@ -27,17 +27,12 @@ var storage = {
       })
       .done();
   },
-  setRegimenForOneRepMax(weight){
-    benchData.getRegimen(weight)
-      .then((regimen) => {
-        var lastCompletedWorkoutIndex = this.getLastCompletedWorkoutIndex();
-        if (lastCompletedWorkoutIndex){
-          var completedWorkouts = this.getCompletedWorkouts(lastCompletedWorkoutIndex);
-          regimen = completedWorkouts.concat(regimen.slice(lastCompletedWorkoutIndex + 1));
-        }
-        asyncStorage.setRegimen(regimen)
+  setRoutineForOneRepMax(weight){
+    benchData.getRoutine(weight)
+      .then((routine) => {
+        asyncStorage.setRoutine(routine)
           .then(() => {
-            console.log('successfully set regimen');
+            console.log('successfully set routine');
           }).done();
       }).done();
   },
@@ -61,12 +56,12 @@ var storage = {
     return lastCompletedWorkoutIndex;
   },
   getCompletedWorkouts(index){
-    var regimen = asyncStorage.getWorkoutLog()
+    var routine = asyncStorage.getWorkoutLog()
       .then((data) => {
         data = JSON.parse(data);
         return data.slice(0, index);
       }).done();
-      return regimen;
+      return routine;
   }
 
 };

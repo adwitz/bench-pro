@@ -39,7 +39,7 @@ class SetOneRepMax extends Component {
   saveOneRepMaxSuccess(weight){
     console.log('saved 1rm ');
     this.setSuccessState('One rep max saved!');
-    storage.setRegimenForOneRepMax(weight);
+    storage.setRoutineForOneRepMax(weight);
   }
   saveOneRepMaxError(err){
     console.log('failed to save 1rm: ', err);

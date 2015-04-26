@@ -27,9 +27,16 @@ var styles = StyleSheet.create({
 class Routine extends Component {
   constructor(props){
     super(props);
-    benchData.getRegimen(oneRepMax).then((res) => {
-      this.setState({isLoading: false});
-    });
+    storage.getOneRepMax()
+      .then((weight) => {
+        weight = JSON.parse(weight);
+        benchData.getRoutine(weight)
+          .then((res) => {
+            this.setState({
+              isLoading: false
+            });
+          }).done()
+      }).done();
     this.state = {
       isLoading: true
     };
@@ -43,7 +50,7 @@ class Routine extends Component {
         <ActivityIndicatorIOS
           animating={this.state.isLoading}
           color="#111"
-          size="Large"></ActivityIndicatorIOS>
+          size="large"></ActivityIndicatorIOS>
       </View>
     );
   }
