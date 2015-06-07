@@ -28,7 +28,7 @@ class Routine extends Component {
     super(props)
       benchData.getRegimen('100').then((res) => {
       this.setState({isLoading: false});
-      console.log('sucess');
+      console.log('success: ', res);
     });
     this.state = {
       isLoading: true
@@ -43,7 +43,7 @@ class Routine extends Component {
         <ActivityIndicatorIOS
           animating={this.state.isLoading}
           color="#111"
-          size="Large"></ActivityIndicatorIOS>
+          size="large"></ActivityIndicatorIOS>
       </View>
     );
   }
