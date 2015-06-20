@@ -10,7 +10,7 @@ var {
   Component
 } = React;
 
-var Home = require('./App/Components/Home');
+var Home = require('./App/Views/Home');
 
 class BenchPro extends Component {
   render() {

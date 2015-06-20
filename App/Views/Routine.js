@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var benchData = require('../Utils/benchData.js');
+var storage = require('../Utils/storage.js');
 var {
   AppRegistry,
   StyleSheet,
@@ -25,11 +26,14 @@ var styles = StyleSheet.create({
 
 class Routine extends Component {
   constructor(props){
-    super(props)
-      benchData.getRegimen('100').then((res) => {
-      this.setState({isLoading: false});
-      console.log('success: ', res);
-    });
+    super(props);
+    storage.getOneRepMax()
+      .then((weight) => benchData.getRoutine(weight))
+      .then((res) => {
+        this.setState({
+          isLoading: false
+        });
+      }).done();
     this.state = {
       isLoading: true
     };
