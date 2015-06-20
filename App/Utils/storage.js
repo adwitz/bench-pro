@@ -11,7 +11,11 @@ var storage = {
     return asyncStorage.setOneRepMax(weight);
   },
   getOneRepMax(){
-    return asyncStorage.getOneRepMax();
+    return asyncStorage.getOneRepMax()
+      .then((weight) => {
+        weight = JSON.parse(weight);
+        return weight;
+      });
   },
   addToOneRepMaxHistory(weight){
     weight = Number(weight);
@@ -29,11 +33,9 @@ var storage = {
   },
   setRoutineForOneRepMax(weight){
     benchData.getRoutine(weight)
-      .then((routine) => {
-        asyncStorage.setRoutine(routine)
-          .then(() => {
-            console.log('successfully set routine');
-          }).done();
+      .then((routine) => asyncStorage.setRoutine(routine))
+      .then(() => {
+        console.log('successfully set routine');
       }).done();
   },
   logLastWorkout(workout){

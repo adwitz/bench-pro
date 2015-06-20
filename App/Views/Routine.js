@@ -28,15 +28,12 @@ class Routine extends Component {
   constructor(props){
     super(props);
     storage.getOneRepMax()
-      .then((weight) => {
-        weight = JSON.parse(weight);
-        benchData.getRoutine(weight)
-          .then((res) => {
-            this.setState({
-              isLoading: false
-            });
-          }).done()
-      }).done();
+      .then((weight) => benchData.getRoutine(weight))
+      .then((res) => {
+        this.setState({
+          isLoading: false
+        });
+      }).done()
     this.state = {
       isLoading: true
     };
