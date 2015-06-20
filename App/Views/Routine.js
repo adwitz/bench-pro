@@ -33,7 +33,7 @@ class Routine extends Component {
         this.setState({
           isLoading: false
         });
-      }).done()
+      }).done();
     this.state = {
       isLoading: true
     };
