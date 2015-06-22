@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native');
+var validate = require('../Utils/validation');
 var {
   AppRegistry,
   StyleSheet,

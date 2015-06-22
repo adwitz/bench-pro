@@ -15,6 +15,7 @@ class SquareNavButtons extends Component {
     super(props)
   }
   navigate(button) {
+    console.log('square nav: ', this.props.navigator);
     this.props.navigator.push({
       title: button.title,
       component: button.view
@@ -28,13 +29,15 @@ class SquareNavButtons extends Component {
         <TouchableHighlight
           onPress={() => this.navigate(leftButton)}
           style={[styles.squareButton, styles.leftButton]}
-          underlayColor='#99d9f4'>
+          underlayColor='#99d9f4'
+          >
           <Text style={styles.buttonText}>{leftButton.title}</Text>
         </TouchableHighlight>
         <TouchableHighlight
           onPress={() => this.navigate(rightButton)}
           style={[styles.squareButton, styles.rightButton]}
-          underlayColor='#99d9f4'>
+          underlayColor='#99d9f4'
+          navigator={this.props.navigator}>
           <Text style={styles.buttonText}>{rightButton.title}</Text>
         </TouchableHighlight>
       </View>

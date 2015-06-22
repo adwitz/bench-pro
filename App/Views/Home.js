@@ -4,6 +4,7 @@ var React = require('react-native');
 var Routine = require('./Routine');
 var Stats = require('./Stats');
 var OneRepMax = require('./OneRepMax');
+var SetOneRepMax = require('./SetOneRepMax');
 var Settings = require('./Settings');
 var SquareNavButtons = require('./../Components/SquareNavButtons')
 
@@ -20,7 +21,7 @@ class Home extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      top: [{title: 'Set One Rep Max', view: OneRepMax}, {title: 'Workouts', view: Routine}],
+      top: [{title: 'Set One Rep Max', view: SetOneRepMax}, {title: 'Workouts', view: Routine}],
       bottom: [{title: 'Stats', view: Stats}, {title: 'Settings', view: Settings}]
     }
   }

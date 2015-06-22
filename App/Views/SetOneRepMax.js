@@ -16,9 +16,11 @@ var {
 class SetOneRepMax extends Component {
   constructor(props){
     super(props)
+    console.log('props ', props);
     this.state={
       weight: '',
-      error: false
+      error: false,
+      message: props.message
     }
   }
   handleChange(event){
@@ -73,11 +75,15 @@ class SetOneRepMax extends Component {
     var showSuccess = (
       this.state.success ? <Text style={[styles.messages, styles.success]}> {this.state.success} </Text> : <View></View>
     );
+    var passedMessage = (
+      this.state.message ? <Text style={[styles.messages, styles.error]}> {this.state.message} </Text> : <View></View>
+    );
     return (
       <View style={styles.container}>
         <Text>
           Set one rep max
         </Text>
+        {passedMessage}
         <View style={styles.flowRight}>
           <TextInput
             style={styles.searchInput}
