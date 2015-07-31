@@ -3,13 +3,25 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node_modules/react-native/packager/packager.sh"
+    "start": "node_modules/react-native/packager/packager.sh",
+    "test": "jest"
+  },
+  "jest": {
+    "scriptPreprocessor": "node_modules/react-native/jestSupport/scriptPreprocess.js",
+    "setupEnvScriptFile": "node_modules/react-native/jestSupport/env.js",
+    "testFileExtensions": [
+      "js"
+    ],
+    "unmockedModulePathPatterns": [
+      "source-map"
+    ]
   },
   "dependencies": {
     "react-native": "0.5.0"
   },
   "devDependencies": {
     "babel-eslint": "^3.1.17",
-    "eslint": "^0.23.0"
+    "eslint": "^0.23.0",
+    "jest-cli": "^0.4.17"
   }
 }

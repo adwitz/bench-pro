@@ -5,9 +5,7 @@ var validation = {
     return weight % 5 === 0 ? true : false;
   },
   weightIsWithinRange(weight){
-    if (this.weightIsGreaterThanMin(weight) && this.weightIsLessThanMax(weight)){
-      return true;
-    }
+    return this.weightIsGreaterThanMin(weight) && this.weightIsLessThanMax(weight);
   },
   weightIsGreaterThanMin(weight){
     return weight >= 100 ? true : false;
