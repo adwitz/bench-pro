@@ -2,9 +2,15 @@
 
 var benchData = {
   getRoutine(weight){
-    weight = weight.trim();
-    var url = `http://localhost:3000/workouts/${weight}`;
-    return fetch(url).then((res) => res.json());
+    if (weight) {
+      weight = weight.trim();
+      var url = `http://localhost:3000/workouts/${weight}`;
+      return fetch(url).then((res) => res.json());
+    } else {
+      return null;
+    }
+
+
   }
 };
 
