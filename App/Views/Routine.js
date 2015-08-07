@@ -75,18 +75,27 @@ class Routine extends Component {
   }
   renderWorkout(workout){
     var status = this.getStatus(workout);
+    var workouts = this.state.workoutList;
+    var nextButton = this.displayNextWorkoutButton(workout, workouts) ? this.createChangeWorkoutWorkoutButton({text: 'next', style: styles.changeWorkoutButton, direction: 1}) : this.createHiddenButtonView();
+    var prevButton = this.displayPrevWorkoutButton(workout) ? this.createChangeWorkoutWorkoutButton({text: 'prev', style: styles.changeWorkoutButton, direction: -1}) : this.createHiddenButtonView();
     return (
       <View style={styles.mainContainer}>
-        <View>
-          <Text>Workout {workout.workout} of {this.state.workoutList.length}</Text>
+        <View style={styles.workoutsContainer}>
+          <Text>Workout {workout.number} of {workouts.length}</Text>
           <Text>Status: {status.status}</Text>
           <TouchableHighlight
             underlayColor='#48BBEC'
-            style={styles.viewWorkoutButton}>
+            style={styles.viewWorkoutButton}
+            onPress={this.workoutSelected.bind(this)}>
             <View style={styles.workout}>
               <Text>{status.buttonText}</Text>
             </View>
           </TouchableHighlight>
+        </View>
+        <View style={styles.changeWorkoutContainer}>
+          {prevButton}
+          <View style={styles.changeButtonSpacer3}></View>
+          {nextButton}
         </View>
       </View>
     );
@@ -98,7 +107,7 @@ class Routine extends Component {
       workout.sets.reduce((previous, set) => {
         return set.completed || previous;
       }, false)
-    }
+    };
 
     if (workout.completed){
       result.status = 'Completed';
@@ -112,8 +121,41 @@ class Routine extends Component {
     }
     return result;
   }
-  workoutSelected(workout){
-    console.log('workout selected: ', workout.workout);
+  displayNextWorkoutButton(workout, workouts){
+    return workout.id < workouts.length - 1 ? true : false;
+  }
+  displayPrevWorkoutButton(workout, workouts){
+    return workout.id === 0 ? false : true;
+  }
+  createChangeWorkoutWorkoutButton(config){
+    return (
+      <TouchableHighlight
+        underlayColor="#F5FCFF"
+        style={config.style}
+        onPress={this.changeWorkout.bind(this, config.direction)}>
+        <Text>{config.text}</Text>
+      </TouchableHighlight>
+    );
+  }
+  createHiddenButtonView(){
+    return (
+      <View style={styles.changeButtonSpacer1}></View>
+    );
+  }
+  changeWorkout(direction){
+    var currentWorkoutIndex = this.state.workouts.current.id;
+    var newWorkoutIndex = currentWorkoutIndex + direction;
+    var workouts = this.state.workoutList;
+    this.setState({
+      workouts: {
+        current: workouts[newWorkoutIndex],
+        previous: workouts[newWorkoutIndex - 1] || null,
+        next: workouts[newWorkoutIndex + 1] || null
+      }
+    });
+  }
+  workoutSelected(){
+    console.log('workout selected: ', this.state.workouts.current);
   }
 }
 
@@ -142,6 +184,7 @@ var styles = StyleSheet.create({
     alignItems: 'center'
   },
   workoutsContainer: {
+    marginTop: 150,
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
   },
@@ -149,6 +192,22 @@ var styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 3
+  },
+  changeWorkoutContainer: {
+    height: 30,
+    marginTop: 20,
+    flexDirection: 'row',
+    backgroundColor: '#F5FCFF'
+  },
+  changeWorkoutButton: {
+    justifyContent: 'center',
+    flex: 1
+  },
+  changeButtonSpacer1: {
+    flex:1
+  },
+  changeButtonSpacer3: {
+    flex: 3
   }
 });
 
