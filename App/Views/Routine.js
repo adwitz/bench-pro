@@ -4,6 +4,8 @@ var React = require('react-native');
 var benchData = require('../Utils/benchData.js');
 var storage = require('../Utils/storage.js');
 var SetOneRepMax = require('./SetOneRepMax');
+var Workout = require('./Workout');
+
 var {
   AppRegistry,
   StyleSheet,
@@ -39,7 +41,9 @@ class Routine extends Component {
       this.props.navigator.replace({
         title: 'Set One Rep Max',
         component: SetOneRepMax,
-        passProps: {message: 'Set your one rep max to unlock your custom routine'}
+        passProps: {
+          message: 'Set your one rep max to unlock your custom routine'
+        }
       });
     }
   }
@@ -155,7 +159,14 @@ class Routine extends Component {
     });
   }
   workoutSelected(){
-    console.log('workout selected: ', this.state.workouts.current);
+    var workout = this.state.workouts.current;
+    this.props.navigator.push({
+      title: 'Workout',
+      component: Workout,
+      passProps: {
+        workout: workout
+      }
+    });
   }
 }
 
