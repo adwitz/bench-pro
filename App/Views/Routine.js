@@ -22,7 +22,7 @@ class Routine extends Component {
   constructor(props){
     super(props);
     storage.getOneRepMax()
-      .then((weight) => benchData.getRoutine(weight))
+      .then((weight) => storage.getRoutine())
       .then((res) => this.handleResponseOrReroute(res))
       .done();
     this.state = {

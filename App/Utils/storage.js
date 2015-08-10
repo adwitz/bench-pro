@@ -38,8 +38,19 @@ var storage = {
         console.log('successfully set routine');
       }).done();
   },
+  getRoutine(){
+    console.log('typeof function: ', typeof asyncStorage.getWorkoutRoutine);
+    return asyncStorage.getWorkoutRoutine()
+      .then((data) => {
+        if (data){
+          return JSON.parse(data);
+        } else {
+          return null;
+        }
+      });
+  },
   logLastWorkout(workout){
-    var history = asyncStorage.getWorkoutLog()
+    var history = asyncStorage.getWorkoutRoutine()
       .then((data) => {
         data = JSON.parse(data);
         data[workout.id] = workout;
@@ -51,14 +62,14 @@ var storage = {
     var lastCompletedWorkoutIndex = asyncStorage.getLastCompletedWorkoutIndex()
       .then((data) => {
         if (data){
-          return data.json();  
+          return data.json();
         }
       })
       .done();
     return lastCompletedWorkoutIndex;
   },
   getCompletedWorkouts(index){
-    var routine = asyncStorage.getWorkoutLog()
+    var routine = asyncStorage.getWorkoutRoutine()
       .then((data) => {
         data = JSON.parse(data);
         return data.slice(0, index);

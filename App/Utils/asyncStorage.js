@@ -22,8 +22,8 @@ var asyncStorage = {
   setRoutine(routine){
     return AsyncStorage.setItem('routine', JSON.stringify(routine));
   },
-  getWorkoutLog(){
-    return AysncStorage.getItem('routine');
+  getWorkoutRoutine(){
+    return AsyncStorage.getItem('routine');
   },
   setLastCompletedWorkoutIndex(workoutNumber){
     return AsyncStorage.setItem('lastCompleted', JSON.stringify(workoutNumber));
