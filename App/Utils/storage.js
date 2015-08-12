@@ -38,8 +38,12 @@ var storage = {
         console.log('successfully set routine');
       }).done();
   },
+  updateRoutine(routine){
+    asyncStorage.setRoutine(routine)
+      .then((data) => {console.log('successfully updated workouts: ', data)})
+      .done();
+  },
   getRoutine(){
-    console.log('typeof function: ', typeof asyncStorage.getWorkoutRoutine);
     return asyncStorage.getWorkoutRoutine()
       .then((data) => {
         if (data){

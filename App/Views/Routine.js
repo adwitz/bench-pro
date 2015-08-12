@@ -5,6 +5,7 @@ var benchData = require('../Utils/benchData.js');
 var storage = require('../Utils/storage.js');
 var SetOneRepMax = require('./SetOneRepMax');
 var Workout = require('./Workout');
+var DataStore = require('../Data/DataStore.js');
 
 var {
   AppRegistry,
@@ -37,6 +38,7 @@ class Routine extends Component {
         workoutList: res.workouts,
         workouts: this.getWorkoutsForNav(res.workouts)
       });
+      DataStore.setRoutine(res);
     } else {
       this.props.navigator.replace({
         title: 'Set One Rep Max',

@@ -20,6 +20,7 @@ var asyncStorage = {
     return AsyncStorage.setItem('oneRepMaxHistory', JSON.stringify(history));
   },
   setRoutine(routine){
+    console.log('routine to be added: ', routine);
     return AsyncStorage.setItem('routine', JSON.stringify(routine));
   },
   getWorkoutRoutine(){

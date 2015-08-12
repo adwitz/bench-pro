@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var storage = require('../Utils/storage.js');
+var DataStore = require('../Data/DataStore.js');
 
 var {
   AppRegistry,
@@ -58,7 +59,6 @@ class Workout extends Component {
     );
   }
   setPressed(set){
-    console.log('set pressed: ', this.state.lastCompleted + 1, ' ', set.index);
     if (this.state.lastCompleted + 1 === set.index){
       this.markSetComplete(set);
     } else if (this.state.lastCompleted === set.index){
@@ -78,7 +78,7 @@ class Workout extends Component {
       workout: workout,
       lastCompleted: completed ? set.index : set.index - 1
     });
-    // storage.logLastWork
+    DataStore.updateWorkout(workout);
   }
   updateSet(set, completed){
     var workout = this.state.workout;
