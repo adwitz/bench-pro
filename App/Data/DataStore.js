@@ -1,6 +1,7 @@
 'use strict';
 
 var Storage = require('../Utils/storage');
+var Promise = require('bluebird');
 
 var DataStore = {
 
@@ -8,13 +9,21 @@ var DataStore = {
     this.routine = routine;
   },
   getRoutine(){
-    return this.routine;
+    return Promise.try(() => {
+      if (this.routine) {
+        return this.routine;
+      } else {
+        return Storage.getRoutine();
+      }
+    });
   },
   updateWorkout(workout){
-    var routine = this.getRoutine();
-    routine.workouts[workout.id] = workout;
-    this.setRoutine(routine);
-    Storage.updateRoutine(routine);
+    this.getRoutine()
+      .then((routine) => {
+        routine.workouts[workout.id] = workout;
+        this.setRoutine(routine);
+        Storage.updateRoutine(routine);
+      });
   }
 
 };

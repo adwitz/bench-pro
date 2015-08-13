@@ -22,8 +22,7 @@ var {
 class Routine extends Component {
   constructor(props){
     super(props);
-    storage.getOneRepMax()
-      .then((weight) => storage.getRoutine())
+    DataStore.getRoutine()
       .then((res) => this.handleResponseOrReroute(res))
       .done();
     this.state = {
@@ -38,7 +37,6 @@ class Routine extends Component {
         workoutList: res.workouts,
         workouts: this.getWorkoutsForNav(res.workouts)
       });
-      DataStore.setRoutine(res);
     } else {
       this.props.navigator.replace({
         title: 'Set One Rep Max',
