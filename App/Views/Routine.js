@@ -6,6 +6,7 @@ var storage = require('../Utils/storage.js');
 var SetOneRepMax = require('./SetOneRepMax');
 var Workout = require('./Workout');
 var DataStore = require('../Data/DataStore.js');
+var Constants = require('../Utils/Constants.js').Routine;
 
 var {
   AppRegistry,
@@ -80,8 +81,9 @@ class Routine extends Component {
   renderWorkout(workout){
     var status = this.getStatus(workout);
     var workouts = this.state.workoutList;
-    var nextButton = this.displayNextWorkoutButton(workout, workouts) ? this.createChangeWorkoutWorkoutButton({text: 'next', style: styles.changeWorkoutButton, direction: 1}) : this.createHiddenButtonView();
-    var prevButton = this.displayPrevWorkoutButton(workout) ? this.createChangeWorkoutWorkoutButton({text: 'prev', style: styles.changeWorkoutButton, direction: -1}) : this.createHiddenButtonView();
+    var nextButton = this.getNextWorkoutElement(workout, workouts);
+    var prevButton = this.getPrevWorkoutElement(workout);
+
     return (
       <View style={styles.mainContainer}>
         <View style={styles.workoutsContainer}>
@@ -92,7 +94,7 @@ class Routine extends Component {
             style={styles.viewWorkoutButton}
             onPress={this.workoutSelected.bind(this)}>
             <View style={styles.workout}>
-              <Text>{status.buttonText}</Text>
+              <Text>{status.button}</Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -105,25 +107,46 @@ class Routine extends Component {
     );
   }
   getStatus(workout){
-    var result = {}, someSetsCompleted;
-
-    someSetsCompleted = (workout) => {
-      workout.sets.reduce((previous, set) => {
-        return set.completed || previous;
-      }, false)
-    };
-
+    var result;
     if (workout.completed){
-      result.status = 'Completed';
-      result.buttonText = 'View details';
-    } else if (someSetsCompleted(workout)){
-      result.status = 'In progress';
-      result.buttonText = 'Continue';
+      result = this.getTextsForStatus(Constants.completeStatus, Constants.completeStatusButton);
+    } else if (this.someSetsCompleted(workout)){
+      result = this.getTextsForStatus(Constants.incompleteStatus, Constants.incompleteStatusButton);
     } else {
-      result.status = 'New';
-      result.buttonText = 'Begin';
+      result = this.getTextsForStatus(Constants.newStatus, Constants.newStatusButton);
     }
     return result;
+  }
+  someSetsCompleted(workout){
+    return workout.sets.reduce((previous, set) => {
+      return set.completed || previous;
+    }, false);
+  }
+  getTextsForStatus(status, button){
+    return {
+      status: status,
+      button: button
+    }
+  }
+  getNextWorkoutElement(workout, workouts){
+    return (this.displayNextWorkoutButton(workout, workouts) ?
+      this.createChangeWorkoutWorkoutButton({
+        text: 'next',
+        style: styles.changeWorkoutButton,
+        direction: 1
+      }) :
+      this.createHiddenButtonView()
+    );
+  }
+  getPrevWorkoutElement(workout){
+    return (this.displayPrevWorkoutButton(workout) ?
+      this.createChangeWorkoutWorkoutButton({
+        text: 'prev',
+        style: styles.changeWorkoutButton,
+        direction: -1
+      }) :
+      this.createHiddenButtonView()
+    );
   }
   displayNextWorkoutButton(workout, workouts){
     return workout.id < workouts.length - 1 ? true : false;
