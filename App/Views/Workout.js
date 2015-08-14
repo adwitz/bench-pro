@@ -3,6 +3,7 @@
 var React = require('react-native');
 var storage = require('../Utils/storage.js');
 var DataStore = require('../Data/DataStore.js');
+var Constants = require('../Utils/Constants.js').Workout;
 
 var {
   AppRegistry,
@@ -25,10 +26,13 @@ class Workout extends Component {
     this.state = {
       dataSource: this.dataSource.cloneWithRows(workout.sets),
       workout: workout,
-      lastCompleted: -1
+      lastCompletedSet: -1
     };
   }
   render() {
+
+    var workoutCompleteMessage = this.state.workoutComplete ? this.showWorkoutCompleteText() : <View></View>
+
     return (
       <View
         style={styles.mainContainer}>
@@ -38,6 +42,7 @@ class Workout extends Component {
           renderRow={this.renderSet.bind(this)}
           style={styles.listView}>
         </ListView>
+        {workoutCompleteMessage}
       </View>
     );
   }
@@ -59,9 +64,9 @@ class Workout extends Component {
     );
   }
   setPressed(set){
-    if (this.state.lastCompleted + 1 === set.index){
+    if (this.state.lastCompletedSet + 1 === set.index){
       this.markSetComplete(set);
-    } else if (this.state.lastCompleted === set.index){
+    } else if (this.state.lastCompletedSet === set.index){
       this.markSetIncomplete(set);
     }
   }
@@ -72,19 +77,30 @@ class Workout extends Component {
     this.updateStateForWorkout(set, false)
   }
   updateStateForWorkout(set, completed){
-    var workout = this.updateSet(set, completed)
+    var workout = this.updateWorkout(set, completed)
     this.setState({
       dataSource: this.dataSource.cloneWithRows(workout.sets),
       workout: workout,
-      lastCompleted: completed ? set.index : set.index - 1
+      workoutComplete: workout.completed,
+      lastCompletedSet: completed ? set.index : set.index - 1
     });
     DataStore.updateWorkout(workout);
   }
-  updateSet(set, completed){
+  updateWorkout(set, completed){
     var workout = this.state.workout;
     set.completed = completed;
+    if (completed && workout.sets.length === set.index + 1){
+      workout.completed = true;
+    }
     workout.sets[set.index] = set;
     return workout;
+  }
+  showWorkoutCompleteText(){
+    return (
+      <View>
+        <Text>{Constants.workoutComplete}</Text>
+      </View>
+    );
   }
 }
 

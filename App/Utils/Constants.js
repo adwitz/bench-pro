@@ -8,6 +8,9 @@ var Constants = {
     incompleteStatusButton: 'Continue',
     newStatus: 'New',
     newStatusButton: 'Begin'
+  },
+  Workout: {
+    workoutComplete: 'Workout complete!  See you in a couple days!'
   }
 };
 
