@@ -40,8 +40,12 @@ class Home extends Component {
         <Text style={styles.instructions}>
           Be awesomer.
         </Text>
-        <SquareNavButtons pages={this.state.top} navigator={this.props.navigator}/>
-        <SquareNavButtons pages={this.state.bottom} navigator={this.props.navigator}/>
+        <SquareNavButtons
+          pages={this.state.top}
+          navigator={this.props.navigator}/>
+        <SquareNavButtons
+          pages={this.state.bottom}
+          navigator={this.props.navigator}/>
       </View>
     );
   }

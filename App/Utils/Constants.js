@@ -3,7 +3,8 @@
 var Constants = {
   Global: {
     failure: 'failure',
-    negative: 'negative'
+    negative: 'negative',
+    submit: 'Submit'
   },
   Routine: {
     completeStatus: 'Complete',
