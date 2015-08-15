@@ -4,6 +4,7 @@ var React = require('react-native');
 var storage = require('../Utils/storage.js');
 var DataStore = require('../Data/DataStore.js');
 var Constants = require('../Utils/Constants.js').Workout;
+var GConstants = require('../Utils/Constants.js').Global;
 
 var {
   AppRegistry,
@@ -26,8 +27,17 @@ class Workout extends Component {
     this.state = {
       dataSource: this.dataSource.cloneWithRows(workout.sets),
       workout: workout,
-      lastCompletedSet: -1
+      lastCompletedSet: this.getLastCompletedSet(workout.sets)
     };
+  }
+  getLastCompletedSet(sets){
+    var lastCompleted = -1;
+    sets.map((set) => {
+      if (set.completed) {
+        lastCompleted = set.index;
+      }
+    });
+    return lastCompleted;
   }
   render() {
 
@@ -47,7 +57,9 @@ class Workout extends Component {
     );
   }
   renderSet(set){
-    var buttonStyle = set.completed ? [styles.setButton, styles.setComplete] : styles.setButton;
+
+    var buttonStyle = this.getButtonStyles(set, styles);
+
     return (
       <View>
         <TouchableHighlight
@@ -57,11 +69,25 @@ class Workout extends Component {
           <View>
             <Text>Reps: {set.reps}</Text>
             <Text>Weight: {set.weight}</Text>
-            <Text>Completed: {String(set.completed)}</Text>
+            <Text>Type: {set.type}</Text>
           </View>
         </TouchableHighlight>
       </View>
     );
+  }
+  getButtonStyles(set, styles){
+
+    var styleList =[styles.setButton];
+
+    if (set.completed) {
+      styleList.push(styles.setComplete);
+    } else if (set.type === GConstants.negative) {
+      styleList.push(styles.negativeSet);
+    } else if (set.type === GConstants.failure) {
+      styleList.push(styles.failureSet);
+    }
+
+    return styleList;
   }
   setPressed(set){
     if (this.state.lastCompletedSet + 1 === set.index){
@@ -77,20 +103,25 @@ class Workout extends Component {
     this.updateStateForWorkout(set, false)
   }
   updateStateForWorkout(set, completed){
+
     var workout = this.updateWorkout(set, completed)
+
     this.setState({
       dataSource: this.dataSource.cloneWithRows(workout.sets),
       workout: workout,
       workoutComplete: workout.completed,
       lastCompletedSet: completed ? set.index : set.index - 1
     });
+
     DataStore.updateWorkout(workout);
   }
   updateWorkout(set, completed){
     var workout = this.state.workout;
     set.completed = completed;
-    if (completed && workout.sets.length === set.index + 1){
+    if (completed && workout.sets.length === set.index + 1) {
       workout.completed = true;
+    } else {
+      workout.completed = false;
     }
     workout.sets[set.index] = set;
     return workout;
@@ -125,6 +156,12 @@ var styles = StyleSheet.create({
   },
   setComplete: {
     backgroundColor: 'green'
+  },
+  negativeSet: {
+    backgroundColor: 'yellow'
+  },
+  failureSet: {
+    backgroundColor: 'red'
   }
 });
 

@@ -1,6 +1,10 @@
 'use strict';
 
 var Constants = {
+  Global: {
+    failure: 'failure',
+    negative: 'negative'
+  },
   Routine: {
     completeStatus: 'Complete',
     completeStatusButton: 'View details',
