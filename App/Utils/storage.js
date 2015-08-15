@@ -40,7 +40,9 @@ var storage = {
   },
   updateRoutine(routine){
     asyncStorage.setRoutine(routine)
-      .then((data) => {console.log('successfully updated workouts: ', data)})
+      .then((data) => {
+        console.log('successfully updated workouts: ', data);
+      })
       .done();
   },
   getRoutine(){

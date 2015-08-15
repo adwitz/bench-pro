@@ -17,7 +17,6 @@ var {
 class SetOneRepMax extends Component {
   constructor(props){
     super(props)
-    console.log('props ', props);
     this.state={
       weight: '',
       error: false,
@@ -40,7 +39,6 @@ class SetOneRepMax extends Component {
     }
   }
   saveOneRepMaxSuccess(weight){
-    console.log('saved 1rm ');
     this.setSuccessState('One rep max saved!');
     storage.setRoutineForOneRepMax(weight);
   }
@@ -70,29 +68,20 @@ class SetOneRepMax extends Component {
     })
   }
   render() {
-    var showErr = (
-      this.state.error ? <Text style={[styles.messages, styles.error]}> {this.state.error} </Text> : <View></View>
-    );
-    var showSuccess = (
-      this.state.success ? <Text style={[styles.messages, styles.success]}> {this.state.success} </Text> : <View></View>
-    );
-    var passedMessage = (
-      this.state.message ? <Text style={[styles.messages, styles.error]}> {this.state.message} </Text> : <View></View>
-    );
     return (
       <View style={styles.container}>
         <Text>
           Set one rep max
         </Text>
-        {passedMessage}
         <InputWithButton
           value={this.state.weight}
           handleChange={this.handleChange.bind(this)}
           handleSubmit={this.handleSubmit.bind(this)}
-          buttonText={GConstants.submit}>
+          buttonText={GConstants.submit}
+          error={this.state.error}
+          success={this.state.success}
+          message={this.state.message}>
         </InputWithButton>
-        {showErr}
-        {showSuccess}
       </View>
     );
   }
@@ -103,16 +92,6 @@ var styles = StyleSheet.create({
     padding: 30,
     marginTop: 65,
     alignItems: 'center'
-  },
-  messages: {
-    fontSize: 18,
-    textAlign: 'center'
-  },
-  error: {
-    color: 'red',
-  },
-  success: {
-    color: 'green'
   }
 });
 

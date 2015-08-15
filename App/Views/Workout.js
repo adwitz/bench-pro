@@ -1,10 +1,12 @@
 'use strict';
 
 var React = require('react-native');
-var storage = require('../Utils/storage.js');
-var DataStore = require('../Data/DataStore.js');
-var Constants = require('../Utils/Constants.js').Workout;
-var GConstants = require('../Utils/Constants.js').Global;
+var storage = require('../Utils/storage');
+var DataStore = require('../Data/DataStore');
+var Constants = require('../Utils/Constants').Workout;
+var GConstants = require('../Utils/Constants').Global;
+var InputWithButton = require('../Components/InputWithButton');
+var Validation = require('../Utils/validation');
 
 var {
   AppRegistry,
@@ -27,7 +29,9 @@ class Workout extends Component {
     this.state = {
       dataSource: this.dataSource.cloneWithRows(workout.sets),
       workout: workout,
-      lastCompletedSet: this.getLastCompletedSet(workout.sets)
+      lastCompletedSet: this.getLastCompletedSet(workout.sets),
+      failureReps: '',
+      error: false,
     };
   }
   getLastCompletedSet(sets){
@@ -41,7 +45,8 @@ class Workout extends Component {
   }
   render() {
 
-    var workoutCompleteMessage = this.state.workoutComplete ? this.showWorkoutCompleteText() : <View></View>
+    var failureRepInput = this.state.displayFailureInput ? this.showFailureInput() : this.getEmptyView();
+    var workoutCompleteMessage = this.state.workoutComplete ? this.showWorkoutCompleteText() : this.getEmptyView();
 
     return (
       <View
@@ -52,6 +57,7 @@ class Workout extends Component {
           renderRow={this.renderSet.bind(this)}
           style={styles.listView}>
         </ListView>
+        {failureRepInput}
         {workoutCompleteMessage}
       </View>
     );
@@ -74,6 +80,9 @@ class Workout extends Component {
         </TouchableHighlight>
       </View>
     );
+  }
+  getEmptyView(){
+    return (<View></View>);
   }
   getButtonStyles(set, styles){
 
@@ -109,16 +118,17 @@ class Workout extends Component {
     this.setState({
       dataSource: this.dataSource.cloneWithRows(workout.sets),
       workout: workout,
-      workoutComplete: workout.completed,
-      lastCompletedSet: completed ? set.index : set.index - 1
+      workoutComplete: workout.completed && !this.isFailureSet(set),
+      lastCompletedSet: completed ? set.index : set.index - 1,
+      displayFailureInput: this.isFailureSet(set) && completed
     });
 
     DataStore.updateWorkout(workout);
   }
-  updateWorkout(set, completed){
+  updateWorkout(set, completedStatus){
     var workout = this.state.workout;
-    set.completed = completed;
-    if (completed && workout.sets.length === set.index + 1) {
+    set.completed = completedStatus;
+    if (completedStatus && workout.sets.length === set.index + 1) {
       workout.completed = true;
     } else {
       workout.completed = false;
@@ -126,12 +136,83 @@ class Workout extends Component {
     workout.sets[set.index] = set;
     return workout;
   }
+  isFailureSet(set){
+    if (set.type === GConstants.failure){
+      this.resetRepInput();
+      return true;
+    }
+    return false;
+  }
   showWorkoutCompleteText(){
     return (
       <View>
         <Text>{Constants.workoutComplete}</Text>
       </View>
     );
+  }
+  showFailureInput(){
+    return (
+      <InputWithButton
+        value={this.state.failureReps}
+        handleChange={this.handleChange.bind(this)}
+        handleSubmit={this.handleSubmit.bind(this)}
+        buttonText={GConstants.submit}
+        error={this.state.error}
+        success={this.state.success}>
+      </InputWithButton>
+    );
+  }
+  handleChange(event){
+    this.setState({
+      failureReps: event.nativeEvent.text
+    });
+  }
+  handleSubmit(){
+    var failureReps = this.state.failureReps;
+    if (Validation.isValidNumber(failureReps)) {
+      this.hideRepInput();
+      this.evaluateNumberOfReps(Number(failureReps));
+    } else {
+      this.showErrorMessage(GConstants.invalidNumber);
+    }
+  }
+  evaluateNumberOfReps(reps){
+    if (reps >= 5) {
+      this.promptToIncrease1RM();
+    } else if(reps >= 2) {
+      this.setWorkoutCompleteState();
+    } else {
+      this.promptToDecrease1RM();
+    }
+  }
+  promptToIncrease1RM(){
+    console.log('whoa you should really increase your 1rm');
+  }
+  promptToDecrease1RM(){
+    console.log('you might need to slow down there little buddy.  how about decreasing your 1rm');
+  }
+  hideRepInput(){
+    this.setState({
+      displayFailureInput: false
+    });
+  }
+  setWorkoutCompleteState(){
+    this.setState({
+      displayFailureInput: false,
+      workoutComplete: true,
+      error: false
+    });
+  }
+  showErrorMessage(message){
+    this.setState({
+      error: message
+    });
+  }
+  resetRepInput(){
+    this.setState({
+      error: false,
+      failureReps: ''
+    });
   }
 }
 

@@ -3,6 +3,7 @@
 var Constants = {
   Global: {
     failure: 'failure',
+    invalidNumber: 'Please enter a valid number',
     negative: 'negative',
     submit: 'Submit'
   },

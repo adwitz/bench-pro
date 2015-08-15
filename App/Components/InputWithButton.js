@@ -16,18 +16,33 @@ class InputWithButton extends Component {
     super(props)
   }
   render() {
+    var showError = (
+      this.props.error ? <Text style={[styles.messages, styles.error]}> {this.props.error} </Text> : <View></View>
+    );
+    var showSuccess = (
+      this.props.success ? <Text style={[styles.messages, styles.success]}> {this.props.success} </Text> : <View></View>
+    );
+    var passedMessage = (
+      this.props.message ? <Text style={[styles.messages, styles.error]}> {this.props.message} </Text> : <View></View>
+    );
+
     return (
-      <View style={styles.flowRight}>
-        <TextInput
-          style={styles.searchInput}
-          value={this.props.value}
-          onChange={this.props.handleChange} />
-        <TouchableHighlight
-          style={styles.button}
-          onPress={this.props.handleSubmit}
-          underlayColor="white">
-          <Text style={styles.buttonText}> {this.props.buttonText} </Text>
-        </TouchableHighlight>
+      <View style={styles.container}>
+        {passedMessage}
+        <View style={styles.flowRight}>
+          <TextInput
+            style={styles.searchInput}
+            value={this.props.value}
+            onChange={this.props.handleChange} />
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.props.handleSubmit}
+            underlayColor="white">
+            <Text style={styles.buttonText}> {this.props.buttonText} </Text>
+          </TouchableHighlight>
+        </View>
+        {showError}
+        {showSuccess}
       </View>
     );
   }
@@ -35,7 +50,12 @@ class InputWithButton extends Component {
 
 
 var styles = StyleSheet.create({
+  container: {
+    alignSelf: 'stretch',
+    alignItems: 'center'
+  },
   flowRight: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -68,6 +88,16 @@ var styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: 'stretch',
     justifyContent: 'center'
+  },
+  messages: {
+    fontSize: 18,
+    textAlign: 'center'
+  },
+  error: {
+    color: 'red',
+  },
+  success: {
+    color: 'green'
   }
 });
 

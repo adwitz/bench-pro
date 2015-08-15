@@ -42,6 +42,10 @@ var validation = {
       message = `${message} ${messages[0]}.`;
     }
     return message;
+  },
+  isValidNumber(number){
+    var reg = /^\d+$/;
+    return reg.test(number);
   }
 };
 

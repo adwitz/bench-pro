@@ -15,7 +15,6 @@ class SquareNavButtons extends Component {
     super(props)
   }
   navigate(button) {
-    console.log('square nav: ', this.props.navigator);
     this.props.navigator.push({
       title: button.title,
       component: button.view
