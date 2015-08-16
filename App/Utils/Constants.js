@@ -7,6 +7,7 @@ var Constants = {
     negative: 'negative',
     submit: 'Submit'
   },
+
   Routine: {
     completeStatus: 'Complete',
     completeStatusButton: 'View details',
@@ -15,8 +16,13 @@ var Constants = {
     newStatus: 'New',
     newStatusButton: 'Begin'
   },
+
   Workout: {
-    workoutComplete: 'Workout complete!  See you in a couple days!'
+    confirm: 'Yes',
+    deny: 'No',
+    decrease1RM: 'It seems that was too difficult.  For better results, would you like to decrease your routine\'s 1RM by 5lbs?',
+    increase1RM: 'Whoa that was way too easy.  Would you like to increase your routine\'s 1RM by 5lbs?',
+    workoutComplete: 'Workout complete!  See you in a few days!'
   }
 };
 

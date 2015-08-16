@@ -5,8 +5,9 @@ var storage = require('../Utils/storage');
 var DataStore = require('../Data/DataStore');
 var Constants = require('../Utils/Constants').Workout;
 var GConstants = require('../Utils/Constants').Global;
-var InputWithButton = require('../Components/InputWithButton');
 var Validation = require('../Utils/validation');
+var InputWithButton = require('../Components/InputWithButton');
+var Confirm = require('../Components/Confirmation');
 
 var {
   AppRegistry,
@@ -20,6 +21,7 @@ var {
 } = React;
 
 class Workout extends Component {
+
   constructor(props){
     super(props);
     var workout = this.props.workout;
@@ -32,8 +34,10 @@ class Workout extends Component {
       lastCompletedSet: this.getLastCompletedSet(workout.sets),
       failureReps: '',
       error: false,
+      maxChangeConfirmation: null
     };
   }
+
   getLastCompletedSet(sets){
     var lastCompleted = -1;
     sets.map((set) => {
@@ -43,25 +47,7 @@ class Workout extends Component {
     });
     return lastCompleted;
   }
-  render() {
 
-    var failureRepInput = this.state.displayFailureInput ? this.showFailureInput() : this.getEmptyView();
-    var workoutCompleteMessage = this.state.workoutComplete ? this.showWorkoutCompleteText() : this.getEmptyView();
-
-    return (
-      <View
-        style={styles.mainContainer}>
-        <Text>Welcome to the workout page</Text>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={this.renderSet.bind(this)}
-          style={styles.listView}>
-        </ListView>
-        {failureRepInput}
-        {workoutCompleteMessage}
-      </View>
-    );
-  }
   renderSet(set){
 
     var buttonStyle = this.getButtonStyles(set, styles);
@@ -81,9 +67,11 @@ class Workout extends Component {
       </View>
     );
   }
+
   getEmptyView(){
-    return (<View></View>);
+    return <View></View>;
   }
+
   getButtonStyles(set, styles){
 
     var styleList =[styles.setButton];
@@ -98,6 +86,7 @@ class Workout extends Component {
 
     return styleList;
   }
+
   setPressed(set){
     if (this.state.lastCompletedSet + 1 === set.index){
       this.markSetComplete(set);
@@ -105,12 +94,15 @@ class Workout extends Component {
       this.markSetIncomplete(set);
     }
   }
+
   markSetComplete(set){
     this.updateStateForWorkout(set, true);
   }
+
   markSetIncomplete(set){
     this.updateStateForWorkout(set, false)
   }
+
   updateStateForWorkout(set, completed){
 
     var workout = this.updateWorkout(set, completed)
@@ -125,6 +117,7 @@ class Workout extends Component {
 
     DataStore.updateWorkout(workout);
   }
+
   updateWorkout(set, completedStatus){
     var workout = this.state.workout;
     set.completed = completedStatus;
@@ -136,6 +129,7 @@ class Workout extends Component {
     workout.sets[set.index] = set;
     return workout;
   }
+
   isFailureSet(set){
     if (set.type === GConstants.failure){
       this.resetRepInput();
@@ -143,6 +137,7 @@ class Workout extends Component {
     }
     return false;
   }
+
   showWorkoutCompleteText(){
     return (
       <View>
@@ -150,6 +145,7 @@ class Workout extends Component {
       </View>
     );
   }
+
   showFailureInput(){
     return (
       <InputWithButton
@@ -162,11 +158,13 @@ class Workout extends Component {
       </InputWithButton>
     );
   }
+
   handleChange(event){
     this.setState({
       failureReps: event.nativeEvent.text
     });
   }
+
   handleSubmit(){
     var failureReps = this.state.failureReps;
     if (Validation.isValidNumber(failureReps)) {
@@ -176,6 +174,7 @@ class Workout extends Component {
       this.showErrorMessage(GConstants.invalidNumber);
     }
   }
+
   evaluateNumberOfReps(reps){
     if (reps >= 5) {
       this.promptToIncrease1RM();
@@ -185,17 +184,48 @@ class Workout extends Component {
       this.promptToDecrease1RM();
     }
   }
+
   promptToIncrease1RM(){
-    console.log('whoa you should really increase your 1rm');
+    this.showRepChangeConfirmation(Constants.increase1RM);
   }
+
   promptToDecrease1RM(){
-    console.log('you might need to slow down there little buddy.  how about decreasing your 1rm');
+    this.showRepChangeConfirmation(Constants.decrease1RM);
   }
+
+  getMaxChangeConfirmation(){
+    console.log('about to create a new confirm');
+    return (
+      <Confirm
+        confirmText={Constants.confirm}
+        denyText={Constants.deny}
+        handleConfirmSubmit={this.handleConfirmSubmit}
+        handleDenySubmit={this.handleDenySubmit}
+        message={this.state.maxChangeConfirmation}>
+      </Confirm>
+    );
+  }
+
+  handleConfirmSubmit(){
+    console.log('confirming');
+  }
+
+  handleDenySubmit(){
+    console.log('denying');
+  }
+
+  showRepChangeConfirmation(message){
+    this.setState({
+      maxChangeConfirmation: message
+    });
+  }
+
   hideRepInput(){
     this.setState({
       displayFailureInput: false
     });
   }
+
   setWorkoutCompleteState(){
     this.setState({
       displayFailureInput: false,
@@ -203,17 +233,50 @@ class Workout extends Component {
       error: false
     });
   }
+
   showErrorMessage(message){
     this.setState({
       error: message
     });
   }
+
   resetRepInput(){
     this.setState({
       error: false,
       failureReps: ''
     });
   }
+
+  showFailureRepInputIfNecessary(){
+    return this.state.displayFailureInput ? this.showFailureInput() : this.getEmptyView();
+  }
+
+  showWorkoutCompleteMessageIfNecessary(){
+    return this.state.workoutComplete ? this.showWorkoutCompleteText() : this.getEmptyView();
+  }
+
+  render() {
+
+    var failureRepInput = this.showFailureRepInputIfNecessary();
+    var workoutCompleteMessage = this.showWorkoutCompleteMessageIfNecessary();
+    var confirmation = this.state.maxChangeConfirmation ? this.getMaxChangeConfirmation() : this.getEmptyView();
+
+    return (
+      <View
+        style={styles.mainContainer}>
+        <Text>Welcome to the workout page</Text>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderSet.bind(this)}
+          style={styles.listView}>
+        </ListView>
+        {failureRepInput}
+        {workoutCompleteMessage}
+        {confirmation}
+      </View>
+    );
+  }
+
 }
 
 var styles = StyleSheet.create({
