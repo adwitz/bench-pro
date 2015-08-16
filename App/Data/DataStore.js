@@ -1,13 +1,11 @@
 'use strict';
 
 var Storage = require('../Utils/storage');
+var BenchData = require('../Utils/benchData');
 var Promise = require('bluebird');
 
 var DataStore = {
 
-  setRoutine(routine){
-    this.routine = routine;
-  },
   getRoutine(){
     return Promise.try(() => {
       if (this.routine) {
@@ -17,6 +15,59 @@ var DataStore = {
       }
     });
   },
+
+  setRoutine(routine){
+    this.routine = routine;
+    return Storage.updateRoutine(routine);
+  },
+
+  getWorkouts(){
+    return this.getRoutine()
+      .then((routine) => {
+        return routine.workouts;
+      });
+  },
+
+  getOneRepMax(){
+    return Promise.try(() => {
+      if (this.oneRepMax) {
+        return this.oneRepMax;
+      } else {
+        return Storage.getOneRepMax();
+      }
+    });
+  },
+
+  setOneRepMax(weight){
+    this.oneRepMax = Number(weight);
+  },
+
+  changeOneRepMax(weight, refresh){
+    Promise.try(() => {
+      return this.getOneRepMax();
+    }).then((oneRepMax) => {
+      var newOneRepMax = oneRepMax + weight;
+      this.setOneRepMax(newOneRepMax);
+      return Promise.join(BenchData.getWorkouts(newOneRepMax), this.getWorkouts(), this.getRoutine(), this.getOneRepMax());
+    }).then((response) => {
+      var newWorkouts = response[0];
+      var completedWorkouts = response[1];
+      var routine = response[2];
+      var oneRepMax = response[3];
+      var lastCompletedWorkout = this.getLastCompletedWorkout();
+      var updatedWorkouts = completedWorkouts.slice(0, lastCompletedWorkout + 1).concat(newWorkouts.slice(lastCompletedWorkout + 1));
+      routine.max = oneRepMax;
+      routine.workouts = updatedWorkouts;
+      return this.setRoutine(routine);
+    })
+    .then(() => {
+      refresh();
+    })
+    .catch((err) => {
+      console.log('error retreiving message: ', err);
+    });
+  },
+
   updateWorkout(workout){
     this.getRoutine()
       .then((routine) => {
@@ -24,6 +75,19 @@ var DataStore = {
         this.setRoutine(routine);
         Storage.updateRoutine(routine);
       });
+    this.setLastCompletedWorkout(workout);
+  },
+
+  getLastCompletedWorkout(){
+    return this.lastCompletedWorkout;
+  },
+
+  setLastCompletedWorkout(workout){
+    if (workout.completed) {
+      this.lastCompletedWorkout = workout.id;
+    } else {
+      this.lastCompletedWorkout = workout.id - 1;
+    }
   }
 
 };

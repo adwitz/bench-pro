@@ -34,7 +34,7 @@ class Workout extends Component {
       lastCompletedSet: this.getLastCompletedSet(workout.sets),
       failureReps: '',
       error: false,
-      maxChangeConfirmation: null
+      maxChangeMessage: null
     };
   }
 
@@ -186,37 +186,38 @@ class Workout extends Component {
   }
 
   promptToIncrease1RM(){
-    this.showRepChangeConfirmation(Constants.increase1RM);
+    this.showRepChangeConfirmation(Constants.increase1RM, 5);
   }
 
   promptToDecrease1RM(){
-    this.showRepChangeConfirmation(Constants.decrease1RM);
+    this.showRepChangeConfirmation(Constants.decrease1RM, -5);
   }
 
   getMaxChangeConfirmation(){
-    console.log('about to create a new confirm');
     return (
       <Confirm
         confirmText={Constants.confirm}
         denyText={Constants.deny}
-        handleConfirmSubmit={this.handleConfirmSubmit}
-        handleDenySubmit={this.handleDenySubmit}
-        message={this.state.maxChangeConfirmation}>
+        handleConfirmSubmit={this.handleConfirmSubmit.bind(this)}
+        handleDenySubmit={this.handleDenySubmit.bind(this)}
+        message={this.state.maxChangeMessage}>
       </Confirm>
     );
   }
 
   handleConfirmSubmit(){
-    console.log('confirming');
+    DataStore.changeOneRepMax(this.state.maxChangeAmount, this.props.triggerDataRefresh);
   }
 
   handleDenySubmit(){
     console.log('denying');
+    DataStore.changeOneRepMax(this.state.maxChangeAmount);
   }
 
-  showRepChangeConfirmation(message){
+  showRepChangeConfirmation(message, pounds){
     this.setState({
-      maxChangeConfirmation: message
+      maxChangeMessage: message,
+      maxChangeAmount: pounds
     });
   }
 
@@ -259,7 +260,7 @@ class Workout extends Component {
 
     var failureRepInput = this.showFailureRepInputIfNecessary();
     var workoutCompleteMessage = this.showWorkoutCompleteMessageIfNecessary();
-    var confirmation = this.state.maxChangeConfirmation ? this.getMaxChangeConfirmation() : this.getEmptyView();
+    var confirmation = this.state.maxChangeMessage ? this.getMaxChangeConfirmation() : this.getEmptyView();
 
     return (
       <View

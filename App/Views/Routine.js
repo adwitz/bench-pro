@@ -30,6 +30,9 @@ class Routine extends Component {
       loaded: false
     }
   }
+  componentWillMount(){
+    console.log('about to mount');
+  }
   handleResponseOrReroute(res){
     if (res){
       this.setState({
@@ -181,13 +184,17 @@ class Routine extends Component {
       }
     });
   }
+  triggerDataRefresh(){
+    console.log('time to reset state');
+  }
   workoutSelected(){
     var workout = this.state.workouts.current;
     this.props.navigator.push({
       title: 'Workout',
       component: Workout,
       passProps: {
-        workout: workout
+        workout: workout,
+        triggerDataRefresh: this.triggerDataRefresh
       }
     });
   }

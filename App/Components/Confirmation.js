@@ -19,13 +19,14 @@ class Confirmation extends Component {
     return (
       <View style={styles.container}>
         <Text style={this.message}>{this.props.message}</Text>
-        <View style={styles.flowRight}>
+        <View style={styles.buttonFlow}>
           <TouchableHighlight
             style={styles.button}
             onPress={this.props.handleDenySubmit}
             underlayColor="white">
             <Text style={styles.buttonText}> {this.props.denyText} </Text>
           </TouchableHighlight>
+          <View style={styles.spacer}></View>
           <TouchableHighlight
             style={styles.button}
             onPress={this.props.handleConfirmSubmit}
@@ -44,12 +45,11 @@ var styles = StyleSheet.create({
     alignSelf: 'stretch',
     alignItems: 'center'
   },
-  flowRight: {
+   buttonFlow: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
-    // marginTop: 30
   },
   buttonText: {
     fontSize: 18,
@@ -58,7 +58,7 @@ var styles = StyleSheet.create({
   },
   button: {
     height: 36,
-    flex: 2,
+    flex: 3,
     flexDirection: 'row',
     backgroundColor: '#48BBEC',
     borderColor: '#48BBEC',
@@ -71,6 +71,9 @@ var styles = StyleSheet.create({
   message: {
     fontSize: 18,
     textAlign: 'center'
+  },
+  spacer: {
+    flex: 1
   }
 });
 
