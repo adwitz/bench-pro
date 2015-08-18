@@ -8,6 +8,7 @@ var DataStore = {
 
   getRoutine(){
     return Promise.try(() => {
+      console.log('calling get routine');
       if (this.routine) {
         return this.routine;
       } else {
@@ -48,23 +49,20 @@ var DataStore = {
     }).then((oneRepMax) => {
       var newOneRepMax = oneRepMax + weight;
       this.setOneRepMax(newOneRepMax);
-      return Promise.join(BenchData.getWorkouts(newOneRepMax), this.getWorkouts(), this.getRoutine(), this.getOneRepMax());
+      return Promise.join(BenchData.getWorkouts(newOneRepMax), this.getRoutine(), this.getOneRepMax());
     }).then((response) => {
       var newWorkouts = response[0];
-      var completedWorkouts = response[1];
-      var routine = response[2];
-      var oneRepMax = response[3];
+      var routine = response[1];
+      var oneRepMax = response[2];
       var lastCompletedWorkout = this.getLastCompletedWorkout();
-      var updatedWorkouts = completedWorkouts.slice(0, lastCompletedWorkout + 1).concat(newWorkouts.slice(lastCompletedWorkout + 1));
+      var updatedWorkouts = routine.workouts.slice(0, lastCompletedWorkout + 1).concat(newWorkouts.slice(lastCompletedWorkout + 1));
       routine.max = oneRepMax;
       routine.workouts = updatedWorkouts;
       return this.setRoutine(routine);
-    })
-    .then(() => {
+    }).then(() => {
       refresh();
-    })
-    .catch((err) => {
-      console.log('error retreiving message: ', err);
+    }).catch((err) => {
+      console.log('error retrieving message: ', err);
     });
   },
 

@@ -26,22 +26,6 @@ var benchData = {
       .then((res) => {
         return res.workouts
       });
-    // console.log('called get workouts in benchdata');
-    // if (!weight) {
-    //   return null;
-    // }
-
-    // weight = this.santizeWeight(weight);
-
-    // var url = `http://localhost:3000/workouts/${weight}`;
-    // return fetch(url).then((res) => {
-    //   console.log('response: ', res.json());
-    //   return res.json();
-    //   // res.json()
-    // })
-    // .catch((err) => {
-    //   console.warn(err);
-    // });
   }
 };
 

@@ -36,7 +36,8 @@ var storage = {
       .then((routine) => asyncStorage.setRoutine(routine))
       .then(() => {
         console.log('successfully set routine');
-      }).done();
+      })
+      .done();
   },
   updateRoutine(routine){
     asyncStorage.setRoutine(routine)
@@ -62,7 +63,8 @@ var storage = {
         data[workout.id] = workout;
         this.updateWorkoutLog(data);
         this.setLastCompletedWorkoutIndex(workout.id);
-      }).done();
+      })
+      .done();
   },
   getLastCompletedWorkoutIndex(){
     var lastCompletedWorkoutIndex = asyncStorage.getLastCompletedWorkoutIndex()
@@ -79,7 +81,8 @@ var storage = {
       .then((data) => {
         data = JSON.parse(data);
         return data.slice(0, index);
-      }).done();
+      })
+      .done();
       return routine;
   }
 

@@ -23,15 +23,15 @@ var {
 class Routine extends Component {
   constructor(props){
     super(props);
-    DataStore.getRoutine()
-      .then((res) => this.handleResponseOrReroute(res))
-      .done();
+    this.loadWorkouts();
     this.state = {
       loaded: false
     }
   }
-  componentWillMount(){
-    console.log('about to mount');
+  loadWorkouts(){
+    DataStore.getRoutine()
+      .then((res) => this.handleResponseOrReroute(res))
+      .done();
   }
   handleResponseOrReroute(res){
     if (res){
@@ -185,7 +185,7 @@ class Routine extends Component {
     });
   }
   triggerDataRefresh(){
-    console.log('time to reset state');
+    this.loadWorkouts();
   }
   workoutSelected(){
     var workout = this.state.workouts.current;
@@ -194,7 +194,7 @@ class Routine extends Component {
       component: Workout,
       passProps: {
         workout: workout,
-        triggerDataRefresh: this.triggerDataRefresh
+        triggerDataRefresh: this.triggerDataRefresh.bind(this)
       }
     });
   }

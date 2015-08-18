@@ -210,8 +210,10 @@ class Workout extends Component {
   }
 
   handleDenySubmit(){
-    console.log('denying');
-    DataStore.changeOneRepMax(this.state.maxChangeAmount);
+    this.setState({
+      maxChangeMessage: null,
+      workoutComplete: true
+    });
   }
 
   showRepChangeConfirmation(message, pounds){
