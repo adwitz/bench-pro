@@ -8,7 +8,6 @@ var DataStore = {
 
   getRoutine(){
     return Promise.try(() => {
-      console.log('calling get routine');
       if (this.routine) {
         return this.routine;
       } else {
@@ -30,6 +29,7 @@ var DataStore = {
   },
 
   getOneRepMax(){
+
     return Promise.try(() => {
       if (this.oneRepMax) {
         return this.oneRepMax;
@@ -40,29 +40,44 @@ var DataStore = {
   },
 
   setOneRepMax(weight){
+
     this.oneRepMax = Number(weight);
+
   },
 
-  changeOneRepMax(weight, refresh){
+  changeOneRepMax(weight, refreshWorkoutView){
+
+    var getUpdatedWorkouts = (current, next, lastCompleted) => {
+      return current.slice(0, lastCompleted + 1).concat(next.slice(lastCompleted + 1));
+    };
+
     Promise.try(() => {
+
       return this.getOneRepMax();
+
     }).then((oneRepMax) => {
+
       var newOneRepMax = oneRepMax + weight;
       this.setOneRepMax(newOneRepMax);
-      return Promise.join(BenchData.getWorkouts(newOneRepMax), this.getRoutine(), this.getOneRepMax());
+      return Promise.join(this.getRoutine(), BenchData.getWorkouts(newOneRepMax), this.getOneRepMax());
+
     }).then((response) => {
-      var newWorkouts = response[0];
-      var routine = response[1];
-      var oneRepMax = response[2];
+
+      var [routine, newWorkouts, oneRepMax] = response;
       var lastCompletedWorkout = this.getLastCompletedWorkout();
-      var updatedWorkouts = routine.workouts.slice(0, lastCompletedWorkout + 1).concat(newWorkouts.slice(lastCompletedWorkout + 1));
+      var updatedWorkouts = getUpdatedWorkouts(routine.workouts, newWorkouts, oneRepMax);
+
       routine.max = oneRepMax;
       routine.workouts = updatedWorkouts;
+
       return this.setRoutine(routine);
     }).then(() => {
-      refresh();
+      refreshWorkoutView();
     }).catch((err) => {
       console.log('error retrieving message: ', err);
+      return {success: false, message: err};
+    }).finally(() => {
+      return {success: true};
     });
   },
 
