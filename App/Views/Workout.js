@@ -198,22 +198,20 @@ class Workout extends Component {
       <Confirm
         confirmText={Constants.confirm}
         denyText={Constants.deny}
-        handleConfirmSubmit={this.handleConfirmSubmit.bind(this)}
-        handleDenySubmit={this.handleDenySubmit.bind(this)}
+        handleConfirmSubmit={this.setWorkoutCompleteState.bind(this)}
+        handleDenySubmit={this.setWorkoutCompleteState.bind(this)}
         message={this.state.maxChangeMessage}>
       </Confirm>
     );
   }
 
   handleConfirmSubmit(){
-    DataStore.changeOneRepMax(this.state.maxChangeAmount, this.props.triggerDataRefresh);
-  }
-
-  handleDenySubmit(){
-    this.setState({
-      maxChangeMessage: null,
-      workoutComplete: true
-    });
+    DataStore.changeOneRepMax(this.state.maxChangeAmount, this.props.triggerDataRefresh)
+      .then((res) => {
+        if (res.success) {
+          this.setWorkoutCompleteState();
+        }
+      });
   }
 
   showRepChangeConfirmation(message, pounds){
@@ -232,8 +230,9 @@ class Workout extends Component {
   setWorkoutCompleteState(){
     this.setState({
       displayFailureInput: false,
+      error: false,
+      maxChangeMessage: null,
       workoutComplete: true,
-      error: false
     });
   }
 
