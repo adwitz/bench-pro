@@ -22,13 +22,13 @@ class InputWithButton extends Component {
     var showSuccess = (
       this.props.success ? <Text style={[styles.messages, styles.success]}> {this.props.success} </Text> : <View></View>
     );
-    var passedMessage = (
-      this.props.message ? <Text style={[styles.messages, styles.error]}> {this.props.message} </Text> : <View></View>
+    var message = (
+      this.props.message ? <Text style={[styles.messages]}> {this.props.message} </Text> : <View></View>
     );
 
     return (
       <View style={styles.container}>
-        {passedMessage}
+        {message}
         <View style={styles.flowRight}>
           <TextInput
             style={styles.searchInput}

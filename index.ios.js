@@ -14,8 +14,8 @@ var {
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   TabBarIOS,
+  NavigatorIOS,
   Component
 } = React;
 
@@ -50,9 +50,16 @@ class BenchPro extends Component {
   }
   createRoutineView() {
     return (
-      <Routine
-        routine={ this.state.routine }
-        loaded={ this.state.loaded} />
+      <NavigatorIOS
+        style={styles.container}
+        initialRoute={{
+          title: 'Workout',
+          component: Routine,
+          passProps: {
+            loaded: this.state.loaded
+          }
+        }}
+      />
     );
   }
   render() {

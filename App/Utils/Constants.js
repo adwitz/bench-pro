@@ -22,6 +22,7 @@ var Constants = {
     deny: 'No',
     decrease1RM: 'It seems that was too difficult.  For better results, would you like to decrease your routine\'s 1RM by 5lbs?',
     increase1RM: 'Whoa that was way too easy.  Would you like to increase your routine\'s 1RM by 5lbs?',
+    howManyReps: 'How many reps did you complete?',
     workoutComplete: 'Workout complete!  See you in a few days!'
   }
 };

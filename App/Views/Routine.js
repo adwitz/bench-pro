@@ -3,9 +3,8 @@
 var React = require('react-native');
 var benchData = require('../Utils/benchData.js');
 var storage = require('../Utils/storage.js');
-var SetOneRepMax = require('./SetOneRepMax');
 var Workout = require('./Workout');
-
+var Loading = require('./Loading');
 var DataStore = require('../Data/DataStore.js');
 var Constants = require('../Utils/Constants.js').Routine;
 
@@ -16,7 +15,8 @@ var {
   ListView,
   ActivityIndicatorIOS,
   Component,
-  TouchableHighlight
+  TouchableHighlight,
+  NavigatorIOS
 } = React;
 
 class Routine extends Component {
@@ -41,7 +41,6 @@ class Routine extends Component {
         workouts: this.getWorkoutsForNav(res.workouts)
       });
     } else {
-      console.log('failed to retrieve workouts');
       this.setState({
         loaded: true
       });
