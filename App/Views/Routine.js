@@ -5,19 +5,18 @@ var benchData = require('../Utils/benchData.js');
 var storage = require('../Utils/storage.js');
 var SetOneRepMax = require('./SetOneRepMax');
 var Workout = require('./Workout');
+
 var DataStore = require('../Data/DataStore.js');
 var Constants = require('../Utils/Constants.js').Routine;
 
 var {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
   ListView,
   ActivityIndicatorIOS,
   Component,
-  TouchableHighlight,
-  Image
+  TouchableHighlight
 } = React;
 
 class Routine extends Component {
@@ -30,10 +29,10 @@ class Routine extends Component {
   }
   loadWorkouts(){
     DataStore.getRoutine()
-      .then((res) => this.handleResponseOrReroute(res))
+      .then((res) => this.handleResponse(res))
       .done();
   }
-  handleResponseOrReroute(res){
+  handleResponse(res){
     if (res){
       this.setState({
         loaded: true,
@@ -42,12 +41,9 @@ class Routine extends Component {
         workouts: this.getWorkoutsForNav(res.workouts)
       });
     } else {
-      this.props.navigator.replace({
-        title: 'Set One Rep Max',
-        component: SetOneRepMax,
-        passProps: {
-          message: 'Set your one rep max to unlock your custom routine'
-        }
+      console.log('failed to retrieve workouts');
+      this.setState({
+        loaded: true
       });
     }
   }
@@ -64,22 +60,9 @@ class Routine extends Component {
   }
   render() {
     if (!this.state.loaded) {
-      return this.renderLoadingView();
+      return <Loading />;
     }
     return this.renderWorkout(this.state.workouts.current);
-  }
-  renderLoadingView(){
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>
-          Workouts
-        </Text>
-        <ActivityIndicatorIOS
-          animating={!this.state.loaded}
-          color="#111"
-          size="large" />
-      </View>
-    );
   }
   renderWorkout(workout){
     var status = this.getStatus(workout);
