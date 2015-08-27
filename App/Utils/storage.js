@@ -5,11 +5,13 @@ var asyncStorage = require('./asyncStorage');
 var benchData = require('./benchData');
 
 var storage = {
+
   setOneRepMax(weight){
     weight = weight.trim();
     this.addToOneRepMaxHistory(weight);
     return asyncStorage.setOneRepMax(weight);
   },
+
   getOneRepMax(){
     return asyncStorage.getOneRepMax()
       .then((weight) => {
@@ -17,6 +19,7 @@ var storage = {
         return Number(weight);
       });
   },
+
   addToOneRepMaxHistory(weight){
     weight = Number(weight);
     asyncStorage.getOneRepMaxHistory()
@@ -31,6 +34,16 @@ var storage = {
       })
       .done();
   },
+
+  getOneRepMaxHistory() {
+    return asyncStorage.getOneRepMaxHistory()
+      .then((res) => {
+        if (res) {
+          return JSON.parse(res);
+        }
+      });
+  },
+
   setRoutineForOneRepMax(weight){
     benchData.getRoutine(weight)
       .then((routine) => asyncStorage.setRoutine(routine))
@@ -39,6 +52,7 @@ var storage = {
       })
       .done();
   },
+
   updateRoutine(routine){
     asyncStorage.setRoutine(routine)
       .then((data) => {
@@ -46,6 +60,7 @@ var storage = {
       })
       .done();
   },
+
   getRoutine(){
     return asyncStorage.getWorkoutRoutine()
       .then((data) => {
@@ -56,8 +71,9 @@ var storage = {
         }
       });
   },
+
   logLastWorkout(workout){
-    var history = asyncStorage.getWorkoutRoutine()
+    asyncStorage.getWorkoutRoutine()
       .then((data) => {
         data = JSON.parse(data);
         data[workout.id] = workout;
@@ -66,6 +82,7 @@ var storage = {
       })
       .done();
   },
+
   getLastCompletedWorkoutIndex(){
     var lastCompletedWorkoutIndex = asyncStorage.getLastCompletedWorkoutIndex()
       .then((data) => {
@@ -76,6 +93,7 @@ var storage = {
       .done();
     return lastCompletedWorkoutIndex;
   },
+
   getCompletedWorkouts(index){
     var routine = asyncStorage.getWorkoutRoutine()
       .then((data) => {
