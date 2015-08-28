@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var Storage = require('../Utils/storage');
+var Constants = require('../Utils/Constants').Stats;
 var BPLib = require('../Utils/BenchProLib');
 
 var {
@@ -29,11 +30,9 @@ class Stats extends Component {
   setMaxHistory() {
     Storage.getOneRepMaxHistory()
       .then((res) => {
-
         this.setState({
           maxHistory: res
         });
-
       })
       .done();
   }
@@ -42,13 +41,13 @@ class Stats extends Component {
     return (
       <View>
         <Text>
-          Initial One Rep Max: {maxHistory[0]}
+          {Constants.initialMax}: {maxHistory[0]}
         </Text>
         <Text>
-          Current One Rep Max: {maxHistory[maxHistory.length - 1]}
+          {Constants.currentMax}: {maxHistory[maxHistory.length - 1]}
         </Text>
         <Text>
-          Best One Rep Max: {BPLib.findGreatestValue(maxHistory)}
+          {Constants.bestMax}: {BPLib.findGreatestValue(maxHistory)}
         </Text>
       </View>
     );

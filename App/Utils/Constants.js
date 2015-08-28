@@ -17,6 +17,12 @@ var Constants = {
     newStatusButton: 'Begin'
   },
 
+  Stats: {
+    bestMax: 'Best One Rep Max',
+    currentMax: 'Current One Rep Max',
+    initialMax: 'Initial One Rep Max'
+  },
+
   Workout: {
     confirm: 'Yes',
     deny: 'No',
