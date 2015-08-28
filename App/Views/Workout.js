@@ -140,7 +140,7 @@ class Workout extends Component {
 
   showWorkoutCompleteText(){
     return (
-      <View>
+      <View style={styles.workoutComplete}>
         <Text>{Constants.workoutComplete}</Text>
       </View>
     );
@@ -153,6 +153,7 @@ class Workout extends Component {
         handleChange={this.handleChange.bind(this)}
         handleSubmit={this.handleSubmit.bind(this)}
         buttonText={GConstants.submit}
+        message={Constants.howManyReps}
         error={this.state.error}
         success={this.state.success}>
       </InputWithButton>
@@ -266,15 +267,16 @@ class Workout extends Component {
     return (
       <View
         style={styles.mainContainer}>
-        <Text>Welcome to the workout page</Text>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={this.renderSet.bind(this)}
           style={styles.listView}>
         </ListView>
-        {failureRepInput}
-        {workoutCompleteMessage}
-        {confirmation}
+        <View style={styles.bottom}>
+          {failureRepInput}
+          {workoutCompleteMessage}
+          {confirmation}
+        </View>
       </View>
     );
   }
@@ -285,12 +287,13 @@ var styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     padding: 30,
-    marginTop: 65,
     flexDirection: 'column',
     justifyContent: 'center',
     backgroundColor: '#F5FCFF'
   },
   listView: {
+    flex: 3,
+    paddingBottom: 20,
     paddingTop: 20,
     backgroundColor: '#F5FCFF'
   },
@@ -299,6 +302,9 @@ var styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 3,
     backgroundColor: '#48BBEC'
+  },
+  bottom: {
+    flex: 1
   },
   setComplete: {
     backgroundColor: 'green'

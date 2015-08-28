@@ -3,13 +3,13 @@
 var React = require('react-native');
 var benchData = require('../Utils/benchData.js');
 var storage = require('../Utils/storage.js');
-var SetOneRepMax = require('./SetOneRepMax');
 var Workout = require('./Workout');
+var Loading = require('./Loading');
 var DataStore = require('../Data/DataStore.js');
 var Constants = require('../Utils/Constants.js').Routine;
+var BPLib = require('../Utils/BenchProLib');
 
 var {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
@@ -17,7 +17,7 @@ var {
   ActivityIndicatorIOS,
   Component,
   TouchableHighlight,
-  Image
+  NavigatorIOS
 } = React;
 
 class Routine extends Component {
@@ -30,65 +30,39 @@ class Routine extends Component {
   }
   loadWorkouts(){
     DataStore.getRoutine()
-      .then((res) => this.handleResponseOrReroute(res))
+      .then((res) => this.handleResponse(res))
       .done();
   }
-  handleResponseOrReroute(res){
+  handleResponse(res){
     if (res){
       this.setState({
         loaded: true,
         max: res.max,
-        workoutList: res.workouts,
-        workouts: this.getWorkoutsForNav(res.workouts)
+        workouts: res.workouts,
+        workoutNav: this.getWorkoutsForNav(res.workouts)
       });
     } else {
-      this.props.navigator.replace({
-        title: 'Set One Rep Max',
-        component: SetOneRepMax,
-        passProps: {
-          message: 'Set your one rep max to unlock your custom routine'
-        }
+      this.setState({
+        loaded: true
       });
     }
-  }
-  getWorkoutsForNav(workouts){
-    var result = {};
-    workouts.map((workout, index, workouts) => {
-      if (workout.completed === false && !result.current){
-        result.current = workout;
-        result.previous = workouts[index - 1] || null;
-        result.next = workouts[index + 1] || null;
-      }
-    });
-    return result;
   }
   render() {
     if (!this.state.loaded) {
-      return this.renderLoadingView();
+      return <Loading />;
     }
-    return this.renderWorkout(this.state.workouts.current);
-  }
-  renderLoadingView(){
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>
-          Workouts
-        </Text>
-        <ActivityIndicatorIOS
-          animating={!this.state.loaded}
-          color="#111"
-          size="large" />
-      </View>
-    );
+    return this.renderWorkout(this.state.workoutNav.current);
   }
   renderWorkout(workout){
     var status = this.getStatus(workout);
-    var workouts = this.state.workoutList;
+    var workouts = this.state.workouts;
     var nextButton = this.getNextWorkoutElement(workout, workouts);
     var prevButton = this.getPrevWorkoutElement(workout);
+    var allWorkoutsComplete = this.getBenchProCompletedView(workout);
 
     return (
       <View style={styles.mainContainer}>
+        {allWorkoutsComplete}
         <View style={styles.workoutsContainer}>
           <Text>Workout {workout.number} of {workouts.length}</Text>
           <Text>Status: {status.status}</Text>
@@ -108,6 +82,17 @@ class Routine extends Component {
         </View>
       </View>
     );
+  }
+  getWorkoutsForNav(workouts){
+    var result = {};
+    workouts.map((workout, index, workouts) => {
+      if (this.isNextWorkout(workout, result) || this.isCompleteFinalWorkout(workout, workouts)){
+        result.current = workout;
+        result.previous = workouts[index - 1] || null;
+        result.next = workouts[index + 1] || null;
+      }
+    });
+    return result;
   }
   getStatus(workout){
     var result;
@@ -151,11 +136,37 @@ class Routine extends Component {
       this.createHiddenButtonView()
     );
   }
-  displayNextWorkoutButton(workout, workouts){
+  displayNextWorkoutButton(workout, workouts) {
     return workout.id < workouts.length - 1 ? true : false;
   }
-  displayPrevWorkoutButton(workout, workouts){
+  displayPrevWorkoutButton(workout, workouts) {
     return workout.id === 0 ? false : true;
+  }
+  getBenchProCompletedView(workout) {
+    if (this.isCompleteFinalWorkout(workout)) {
+      return this.createResetWorkoutButton();
+    }
+    return BPLib.createEmptyView();
+  }
+  createResetWorkoutButton() {
+    return (
+      <View>
+        <Text>congratulations, you just finished bench pro</Text>
+      </View>
+    );
+  }
+  isCompleteFinalWorkout(workout, workouts) {
+    return workout.completed && this.isFinalWorkout(workout, workouts);
+  }
+  isFinalWorkout(workout, workouts) {
+    workouts = workouts || this.state.workouts;
+    return workout.id === workouts.length - 1;
+  }
+  finalWorkoutIsCompleted() {
+    return this.isFinalWorkout(workout) && workout.completed;
+  }
+  isNextWorkout(workout, result) {
+    return workout.completed === false && !result.current;
   }
   createChangeWorkoutWorkoutButton(config){
     return (
@@ -173,7 +184,7 @@ class Routine extends Component {
     );
   }
   changeWorkout(direction){
-    var currentWorkoutIndex = this.state.workouts.current.id;
+    var currentWorkoutIndex = this.state.workoutNav.current.id;
     var newWorkoutIndex = currentWorkoutIndex + direction;
     var workouts = this.state.workoutList;
     this.setState({
@@ -188,7 +199,7 @@ class Routine extends Component {
     this.loadWorkouts();
   }
   workoutSelected(){
-    var workout = this.state.workouts.current;
+    var workout = this.state.workoutNav.current;
     this.props.navigator.push({
       title: 'Workout',
       component: Workout,
