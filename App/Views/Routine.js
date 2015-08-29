@@ -151,7 +151,7 @@ class Routine extends Component {
   createResetWorkoutButton() {
     return (
       <View>
-        <Text>congratulations, you just finished bench pro</Text>
+        <Text>{Constants.workoutsComplete}</Text>
       </View>
     );
   }

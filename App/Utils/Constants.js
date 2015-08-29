@@ -14,7 +14,8 @@ var Constants = {
     incompleteStatus: 'In progress',
     incompleteStatusButton: 'Continue',
     newStatus: 'New',
-    newStatusButton: 'Begin'
+    newStatusButton: 'Begin',
+    workoutsComplete: 'congratulations, you\'ve finished all the workouts'
   },
 
   Stats: {
