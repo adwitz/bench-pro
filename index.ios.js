@@ -4,7 +4,7 @@ var React = require('react-native');
 var Home = require('./App/Views/Home');
 var Routine = require('./App/Views/Routine');
 var SetOneRepMax = require('./App/Views/SetOneRepMax');
-var Settings = require('./App/Views/Settings');
+var Instructions = require('./App/Views/Instructions');
 var Stats = require('./App/Views/Stats');
 var Loading = require('./App/Views/Loading');
 var DataStore = require('./App/Data/DataStore');
@@ -34,14 +34,15 @@ class BenchPro extends Component {
   }
   handleResponseOrReroute(res){
     if (res){
-      console.log('changing state in index.ios')
       this.setState({
         routine: res,
-        loaded: true
       });
     } else {
       this.changeTab('setOneRepMax');
     }
+    this.setState({
+      loaded: true
+    });
   }
   changeTab(tabName) {
     this.setState({
@@ -65,7 +66,6 @@ class BenchPro extends Component {
   render() {
 
     var loadingOrRoutineView = this.state.loaded ? this.createRoutineView() : <Loading />
-
     return (
       <TabBarIOS>
         <TabBarIOS.Item
@@ -87,21 +87,21 @@ class BenchPro extends Component {
           </View>
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          title="Settings"
-          icon={ require('image!settings') }
-          onPress={() => this.changeTab('settings')}
-          selected={ this.state.selectedTab === 'settings' }>
-          <View style={ styles.pageView }>
-            <Settings />
-          </View>
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
           title="Stats"
           icon={ require('image!settings') }
           onPress={() => this.changeTab('stats')}
           selected={ this.state.selectedTab === 'stats' }>
           <View style={ styles.pageView }>
             <Stats />
+          </View>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Instructions"
+          icon={ require('image!settings') }
+          onPress={() => this.changeTab('instructions')}
+          selected={ this.state.selectedTab === 'instructions' }>
+          <View style={ styles.pageView }>
+            <Instructions />
           </View>
         </TabBarIOS.Item>
       </TabBarIOS>
