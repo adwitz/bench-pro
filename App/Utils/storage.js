@@ -16,7 +16,10 @@ var storage = {
     return asyncStorage.getOneRepMax()
       .then((weight) => {
         weight = JSON.parse(weight);
-        return Number(weight);
+        if (weight) {
+          return Number(weight);
+        }
+        return null;
       });
   },
 

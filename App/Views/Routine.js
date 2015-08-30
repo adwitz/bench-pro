@@ -31,29 +31,44 @@ class Routine extends Component {
   loadWorkouts(){
     DataStore.getRoutine()
       .then((res) => this.handleResponse(res))
+      .catch((err) => console.log(err))
       .done();
   }
   handleResponse(res){
     if (res){
       this.setState({
-        loaded: true,
         max: res.max,
         workouts: res.workouts,
         workoutNav: this.getWorkoutsForNav(res.workouts)
       });
-    } else {
-      this.setState({
-        loaded: true
-      });
     }
+    this.setLoadedState(true);
+  }
+  setLoadedState(state) {
+    this.setState({
+      loaded: state
+    })
   }
   render() {
     if (!this.state.loaded) {
       return <Loading />;
+    } else if (this.state.workoutNav) {
+      return this.renderWorkout(this.state.workoutNav.current);
+    } else {
+      return this.renderOneRepMaxNotSet();
     }
-    return this.renderWorkout(this.state.workoutNav.current);
+
   }
-  renderWorkout(workout){
+  renderOneRepMaxNotSet() {
+    return (
+      <View style={styles.mainContainer}>
+        <Text>
+          Set your one rep max to see your customized workout.
+        </Text>
+      </View>
+    );
+  }
+  renderWorkout(workout) {
     var status = this.getStatus(workout);
     var workouts = this.state.workouts;
     var nextButton = this.getNextWorkoutElement(workout, workouts);
