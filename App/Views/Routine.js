@@ -200,9 +200,9 @@ class Routine extends Component {
   changeWorkout(direction){
     var currentWorkoutIndex = this.state.workoutNav.current.id;
     var newWorkoutIndex = currentWorkoutIndex + direction;
-    var workouts = this.state.workoutList;
+    var workouts = this.state.workouts;
     this.setState({
-      workouts: {
+      workoutNav: {
         current: workouts[newWorkoutIndex],
         previous: workouts[newWorkoutIndex - 1] || null,
         next: workouts[newWorkoutIndex + 1] || null
