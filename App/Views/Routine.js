@@ -2,7 +2,6 @@
 
 var React = require('react-native');
 var benchData = require('../Utils/benchData.js');
-var storage = require('../Utils/storage.js');
 var Workout = require('./Workout');
 var Loading = require('./Loading');
 var DataStore = require('../Data/DataStore.js');

@@ -21,6 +21,10 @@ var DataStore = {
     return Storage.updateRoutine(routine);
   },
 
+  setRoutineForOneRepMax(weight) {
+    Storage.setRoutineForOneRepMax(weight);
+  },
+
   getWorkouts(){
     return this.getRoutine()
       .then((routine) => {
@@ -43,6 +47,8 @@ var DataStore = {
 
     this.oneRepMax = Number(weight);
 
+    //Storage.setOneRepMax
+
   },
 
   changeOneRepMax(weight, refreshWorkoutView){
@@ -59,12 +65,16 @@ var DataStore = {
 
       var newOneRepMax = oneRepMax + weight;
       this.setOneRepMax(newOneRepMax);
-      return Promise.join(this.getRoutine(), BenchData.getWorkouts(newOneRepMax), this.getOneRepMax());
+      return Promise.join(
+        this.getRoutine(),
+        BenchData.getWorkouts(newOneRepMax),
+        this.getOneRepMax(),
+        this.getLastCompletedWorkout()
+      );
 
     }).then((response) => {
 
-      var [routine, newWorkouts, oneRepMax] = response;
-      var lastCompletedWorkout = this.getLastCompletedWorkout();
+      var [routine, newWorkouts, oneRepMax, lastCompletedWorkout] = response;
       var updatedWorkouts = getUpdatedWorkouts(routine.workouts, newWorkouts, oneRepMax);
 
       routine.max = oneRepMax;
@@ -92,7 +102,17 @@ var DataStore = {
   },
 
   getLastCompletedWorkout(){
-    return this.lastCompletedWorkout;
+    return Promise.try(() => {
+      if (this.lastCompletedWorkout) {
+        return this.lastCompletedWorkout;
+      } else {
+        console.log('datastore.getLastCompletedWorkout');
+        return Storage.getLastCompletedWorkoutIndex();
+      }
+    })
+    .catch((err) => {
+      console.log('error retreiving last completed workout: ', err);
+    });
   },
 
   setLastCompletedWorkout(workout){

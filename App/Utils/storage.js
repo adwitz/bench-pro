@@ -87,14 +87,18 @@ var storage = {
   },
 
   getLastCompletedWorkoutIndex(){
-    var lastCompletedWorkoutIndex = asyncStorage.getLastCompletedWorkoutIndex()
+    return asyncStorage.getLastCompletedWorkoutIndex()
       .then((data) => {
         if (data){
-          return data.json();
+          return JSON.parse(data);
+        } else {
+          return null;
         }
-      })
-      .done();
-    return lastCompletedWorkoutIndex;
+      });
+  },
+
+  setLastCompletedWorkoutIndex(index) {
+    asyncStorage.setLastCompletedWorkoutIndex(index);
   },
 
   getCompletedWorkouts(index){

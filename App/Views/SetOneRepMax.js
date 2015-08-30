@@ -1,10 +1,14 @@
 'use strict';
 
 var React = require('react-native');
-var validation = require('../Utils/validation');
-var storage = require('../Utils/storage');
+var Validation = require('../Utils/validation');
+var DataStore = require('../Data/DataStore');
+var Storage = require('../Utils/storage');
 var InputWithButton = require('../Components/InputWithButton');
+var Loading = require('../Views/Loading');
+var Constants = require('../Utils/Constants').OneRepMax;
 var GConstants = require('../Utils/Constants').Global;
+var Promise = require('bluebird');
 
 var {
   StyleSheet,
@@ -17,10 +21,12 @@ var {
 class SetOneRepMax extends Component {
   constructor(props){
     super(props)
+    this.loadUserData();
     this.state={
       weight: '',
       error: false,
-      message: props.message
+      message: '',
+      loaded: false
     }
   }
   handleChange(event){
@@ -28,22 +34,77 @@ class SetOneRepMax extends Component {
       weight: event.nativeEvent.text
     });
   }
+  loadUserData() {
+    Promise.try(() => {
+      return Promise.join(
+        DataStore.getOneRepMax(),
+        DataStore.getLastCompletedWorkout()
+      );
+    }).then((response) => {
+      var [oneRepMax, lastCompletedWorkout] = response;
+      this.showInstructionsAndSetStoredMax(oneRepMax);
+      this.setLastCompletedWorkout(lastCompletedWorkout);
+      this.initialLoadComplete();
+    })
+    .catch((err) => {
+      console.log('this better be good:', err);
+    });
+
+  }
+
+  initialLoadComplete() {
+    this.setState({
+      loaded: true
+    });
+  }
+
+  setLastCompletedWorkout(index) {
+    this.setState({
+      lastCompletedWorkout: index
+    });
+  }
+
+  showInstructionsAndSetStoredMax(weight) {
+    if (weight) {
+      this.setState({
+        maxChangeMessage: Constants.updateOneRepMax,
+        storedMax: weight
+      });
+    } else {
+      this.setState({
+        maxChangeMessage: Constants.setOneRepMax
+      });
+    }
+  }
+
   handleSubmit(){
+    console.log(this.state.weight, ' ', this.state.storedMax);
+    if (Number(this.state.weight) === this.state.storedMax) {
+      this.setErrorState(`${Constants.sameMax} ${this.state.weight}${GConstants.lbs}`);
+    } else if (this.state.storedMax){
+      //open up confirmation
+    } else {
+      this.validateAndSetOneRepMax();
+    }
+
+  }
+
+  validateAndSetOneRepMax() {
     var weight = this.state.weight;
-    if (validation.weightIsValid(weight)){
-      storage.setOneRepMax(weight)
+    if (Validation.weightIsValid(weight)){
+      Storage.setOneRepMax(weight)
         .then(() => this.saveOneRepMaxSuccess(weight))
         .done();
     } else {
-      this.setErrorState(validation.getErrorMessage(this.state.weight));
+      this.setErrorState(Validation.getErrorMessage(this.state.weight));
     }
   }
   saveOneRepMaxSuccess(weight){
-    this.setSuccessState('One rep max saved!');
-    storage.setRoutineForOneRepMax(weight);
+    this.setSuccessState(Constants.maxSaved);
+    DataStore.setRoutineForOneRepMax(weight);
   }
   saveOneRepMaxError(err){
-    console.log('failed to save 1rm: ', err);
+    this.setErrorState(`${Constants.saveError}: ${err}`);
   }
   setErrorState(message){
     this.setState({
@@ -68,10 +129,15 @@ class SetOneRepMax extends Component {
     })
   }
   render() {
+
+    if (!this.state.loaded) {
+      return <Loading />
+    }
+
     return (
       <View style={styles.container}>
         <Text>
-          Set one rep max
+          {this.state.maxChangeMessage}
         </Text>
         <InputWithButton
           value={this.state.weight}

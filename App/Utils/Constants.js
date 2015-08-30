@@ -4,8 +4,18 @@ var Constants = {
   Global: {
     failure: 'failure',
     invalidNumber: 'Please enter a valid number',
+    lbs: 'lbs',
     negative: 'negative',
+    pounds: 'pounds',
     submit: 'Submit'
+  },
+
+  OneRepMax: {
+    maxSaved: 'One rep max saved!',
+    sameMax: 'Your max is already set to',
+    saveError: 'Failed to save one rep max',
+    setOneRepMax: 'Set your one rep max',
+    updateOneRepMax: 'Update your one rep max'
   },
 
   Routine: {
