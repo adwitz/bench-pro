@@ -8,6 +8,8 @@ var GConstants = require('../Utils/Constants').Global;
 var Validation = require('../Utils/validation');
 var InputWithButton = require('../Components/InputWithButton');
 var Confirm = require('../Components/Confirmation');
+var Timer = require('../Components/Timer');
+var BPLib = require('../Utils/BenchProLib');
 
 var {
   AppRegistry,
@@ -24,10 +26,13 @@ class Workout extends Component {
 
   constructor(props){
     super(props);
+
     var workout = this.props.workout;
+
     this.dataSource = new ListView.DataSource({
       rowHasChanged: (row1, row2) => row1 !== row2
     });
+
     this.state = {
       dataSource: this.dataSource.cloneWithRows(workout.sets),
       workout: workout,
@@ -90,6 +95,7 @@ class Workout extends Component {
   setPressed(set){
     if (this.state.lastCompletedSet + 1 === set.index){
       this.markSetComplete(set);
+      this.startTimerIfNecessary();
     } else if (this.state.lastCompletedSet === set.index){
       this.markSetIncomplete(set);
     }
@@ -128,6 +134,15 @@ class Workout extends Component {
     }
     workout.sets[set.index] = set;
     return workout;
+  }
+
+  startTimerIfNecessary() {
+    if (!this.state.workoutComplete) {
+      this.setState({
+        runTimer: true,
+        timerDuration: 10
+      });
+    }
   }
 
   isFailureSet(set){
@@ -262,20 +277,24 @@ class Workout extends Component {
 
     var failureRepInput = this.showFailureRepInputIfNecessary();
     var workoutCompleteMessage = this.showWorkoutCompleteMessageIfNecessary();
-    var confirmation = this.state.maxChangeMessage ? this.getMaxChangeConfirmation() : this.getEmptyView();
+    var confirmation = this.state.maxChangeMessage ? this.getMaxChangeConfirmation() : BPLib.createEmptyView();
+    var timer = this.state.runTimer ? <Timer duration={this.state.timerDuration} run={this.state.runTimer}/> : BPLib.createEmptyView();
 
     return (
       <View
         style={styles.mainContainer}>
+        <View style={styles.top}>
+          {failureRepInput}
+          {confirmation}
+          {workoutCompleteMessage}
+          {timer}
+        </View>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={this.renderSet.bind(this)}
           style={styles.listView}>
         </ListView>
         <View style={styles.bottom}>
-          {failureRepInput}
-          {workoutCompleteMessage}
-          {confirmation}
         </View>
       </View>
     );
@@ -302,6 +321,10 @@ var styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 3,
     backgroundColor: '#48BBEC'
+  },
+  top: {
+    marginTop: 35,
+    flex: 1
   },
   bottom: {
     flex: 1
