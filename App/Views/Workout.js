@@ -73,10 +73,6 @@ class Workout extends Component {
     );
   }
 
-  getEmptyView(){
-    return <View></View>;
-  }
-
   getButtonStyles(set, styles){
 
     var styleList =[styles.setButton];
@@ -95,7 +91,6 @@ class Workout extends Component {
   setPressed(set){
     if (this.state.lastCompletedSet + 1 === set.index){
       this.markSetComplete(set);
-      this.startTimerIfNecessary();
     } else if (this.state.lastCompletedSet === set.index){
       this.markSetIncomplete(set);
     }
@@ -115,10 +110,12 @@ class Workout extends Component {
 
     this.setState({
       dataSource: this.dataSource.cloneWithRows(workout.sets),
-      workout: workout,
-      workoutComplete: workout.completed && !this.isFailureSet(set),
+      displayFailureInput: this.isFailureSet(set) && completed,
       lastCompletedSet: completed ? set.index : set.index - 1,
-      displayFailureInput: this.isFailureSet(set) && completed
+      runTimer: completed && !workout.completed,
+      workout: workout,
+      workoutComplete: workout.completed,
+      showWorkoutCompleteText: workout.completed && !this.isFailureSet(set),
     });
 
     DataStore.updateWorkout(workout);
@@ -134,15 +131,6 @@ class Workout extends Component {
     }
     workout.sets[set.index] = set;
     return workout;
-  }
-
-  startTimerIfNecessary() {
-    if (!this.state.workoutComplete) {
-      this.setState({
-        runTimer: true,
-        timerDuration: 10
-      });
-    }
   }
 
   isFailureSet(set){
@@ -248,7 +236,7 @@ class Workout extends Component {
       displayFailureInput: false,
       error: false,
       maxChangeMessage: null,
-      workoutComplete: true,
+      showWorkoutCompleteText: true,
     });
   }
 
@@ -266,19 +254,18 @@ class Workout extends Component {
   }
 
   showFailureRepInputIfNecessary(){
-    return this.state.displayFailureInput ? this.showFailureInput() : this.getEmptyView();
+    return this.state.displayFailureInput ? this.showFailureInput() : BPLib.createEmptyView();
   }
 
   showWorkoutCompleteMessageIfNecessary(){
-    return this.state.workoutComplete ? this.showWorkoutCompleteText() : this.getEmptyView();
+    return this.state.showWorkoutCompleteText ? this.showWorkoutCompleteText() : BPLib.createEmptyView();
   }
 
   render() {
-
     var failureRepInput = this.showFailureRepInputIfNecessary();
     var workoutCompleteMessage = this.showWorkoutCompleteMessageIfNecessary();
     var confirmation = this.state.maxChangeMessage ? this.getMaxChangeConfirmation() : BPLib.createEmptyView();
-    var timer = this.state.runTimer ? <Timer duration={this.state.timerDuration} run={this.state.runTimer}/> : BPLib.createEmptyView();
+    var timer = this.state.runTimer ? <Timer duration="10" run={this.state.runTimer} id={this.state.lastCompletedSet}/> : BPLib.createEmptyView();
 
     return (
       <View

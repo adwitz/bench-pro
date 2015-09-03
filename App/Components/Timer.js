@@ -13,10 +13,9 @@ class Timer extends Component {
   constructor(props) {
     super(props)
 
-    var seconds = Number(props.duration);
-
+    var duration = Number(props.duration);
     this.state = {
-      remaining: props.duration,
+      remaining: duration,
       run: true
     };
   }
@@ -28,16 +27,16 @@ class Timer extends Component {
   componentWillReceiveProps(newProps) {
     if (newProps.run) {
       this.setState({
-        remaining: newProps.duration,
-        run: true
-      }, this.startTimer);
+        remaining: Number(newProps.duration),
+        run: false
+      }, this.resetAndStartTimer());
     }
   }
 
   startTimer() {
     this.setState({
       run: true
-    }, this.runTimer);
+    }, this.runTimer.bind(this, this.props.id));
   }
 
   stopTimer() {
@@ -46,24 +45,18 @@ class Timer extends Component {
     });
   }
 
-  runTimer() {
-    if (this.state.run && this.props.run && this.timeLeft()) {
-      setTimeout(this.decrementAndRun.bind(this), 1000);
+  runTimer(id) {
+    if (this.state.run) {
+      setTimeout(this.decrementAndRun.bind(this, id), 1000);
     }
   }
 
-  decrementTime() {
-    if (this.state.remaining >= 1){
+  decrementAndRun(id) {
+    if (this.isCurrentTimer(id) && this.timeLeft()){
       this.setState({
         remaining: this.state.remaining - 1
-      });
+      }, this.runTimer.bind(this, id))
     }
-
-  }
-
-  decrementAndRun() {
-    this.decrementTime();
-    this.runTimer();
   }
 
   resetTimer() {
@@ -72,6 +65,16 @@ class Timer extends Component {
     });
   }
 
+  resetAndStartTimer() {
+    this.setState({
+      run: true
+    }, this.startTimer);
+
+  }
+
+  isCurrentTimer(id) {
+    return id === this.props.id;
+  }
 
   timeLeft() {
     return this.state.remaining >= 1;
@@ -87,7 +90,7 @@ class Timer extends Component {
 
   render() {
 
-    var timerStatus = this.timeLeft(true) ? this.showTimeRemaining() : this.showTimerComplete();
+    var timerStatus = this.timeLeft() ? this.showTimeRemaining() : this.showTimerComplete();
 
     return (
       <View style={styles.container}>
