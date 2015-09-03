@@ -14,7 +14,40 @@ class Confirmation extends Component {
   constructor(props) {
     super(props)
   }
+
+  renderThreeButtonConfirm() {
+    return (
+      <View style={styles.container}>
+        <Text style={this.message}>{this.props.message}</Text>
+        <View style={styles.buttonFlow}>
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.props.handleDenySubmit}
+            underlayColor="white">
+            <Text style={styles.buttonText}> {this.props.denyText} </Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.props.handleOptionOne}
+            underlayColor="white">
+            <Text style={styles.buttonText}> {this.props.optionOneText} </Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.props.handleOptionTwo}
+            underlayColor="white">
+            <Text style={styles.buttonText}> {this.props.optionTwoText} </Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    );
+  }
+
   render() {
+
+    if (this.props.threeButton === 'true') {
+      return this.renderThreeButtonConfirm();
+    }
 
     return (
       <View style={styles.container}>

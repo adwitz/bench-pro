@@ -2,12 +2,15 @@
 
 var Constants = {
   Global: {
+    cancel: 'Cancel',
     failure: 'failure',
     invalidNumber: 'Please enter a valid number',
     lbs: 'lbs',
     negative: 'negative',
     pounds: 'pounds',
-    submit: 'Submit'
+    reset: 'Reset',
+    submit: 'Submit',
+    update: 'Update'
   },
 
   OneRepMax: {
@@ -15,7 +18,8 @@ var Constants = {
     sameMax: 'Your max is already set to',
     saveError: 'Failed to save one rep max',
     setOneRepMax: 'Set your one rep max',
-    updateOneRepMax: 'Update your one rep max'
+    updateOneRepMax: 'Update your one rep max',
+    workoutsInProgress: 'Looks like you already have a 1RM set and you have made some solid progress.  Would you like to start over with your new 1RM, or would you like to update your current routine with your new 1RM?'
   },
 
   Routine: {

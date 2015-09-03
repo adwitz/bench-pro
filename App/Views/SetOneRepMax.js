@@ -5,6 +5,7 @@ var Validation = require('../Utils/validation');
 var DataStore = require('../Data/DataStore');
 var Storage = require('../Utils/storage');
 var InputWithButton = require('../Components/InputWithButton');
+var Confirmation = require('../Components/Confirmation');
 var Loading = require('../Views/Loading');
 var Constants = require('../Utils/Constants').OneRepMax;
 var GConstants = require('../Utils/Constants').Global;
@@ -78,76 +79,138 @@ class SetOneRepMax extends Component {
   }
 
   handleSubmit(){
-    console.log(this.state.weight, ' ', this.state.storedMax);
-    if (Number(this.state.weight) === this.state.storedMax) {
+
+    if (this.isSameMax()) {
       this.setErrorState(`${Constants.sameMax} ${this.state.weight}${GConstants.lbs}`);
-    } else if (this.state.storedMax){
-      //open up confirmation
-    } else {
-      this.validateAndSetOneRepMax();
-    }
-
-  }
-
-  validateAndSetOneRepMax() {
-    var weight = this.state.weight;
-    if (Validation.weightIsValid(weight)){
-      Storage.setOneRepMax(weight)
-        .then(() => this.saveOneRepMaxSuccess(weight))
-        .done();
-    } else {
+    } else if (!Validation.weightIsValid(this.state.weight)) {
       this.setErrorState(Validation.getErrorMessage(this.state.weight));
+    } else if (this.state.storedMax) {
+      this.showChangeConfirm();
+    } else {
+      this.setOneRepMax();
     }
+
   }
+
+  showChangeConfirm() {
+    this.setState({
+      confirmChange: true
+    });
+  }
+
+  isSameMax() {
+    return Number(this.state.weight) === this.state.storedMax;
+  }
+
+  confirmUpdateOrReset() {
+    this.setState({
+      confirmUpdateOrRest: true
+    });
+  }
+
+  setOneRepMax() {
+    var weight = this.state.weight;
+    Storage.setOneRepMax(weight)
+      .then(() => this.saveOneRepMaxSuccess(weight))
+      .done();
+  }
+
   saveOneRepMaxSuccess(weight){
     this.setSuccessState(Constants.maxSaved);
     DataStore.setRoutineForOneRepMax(weight);
   }
+
   saveOneRepMaxError(err){
     this.setErrorState(`${Constants.saveError}: ${err}`);
   }
+
   setErrorState(message){
     this.setState({
       error: message,
       success: false
-    })
+    });
   }
+
   clearErrorState(){
     this.setState({
       error: false
-    })
+    });
   }
+
   setSuccessState(message){
     this.setState({
       error: false,
       success: message
     });
   }
+
   clearSuccessState(){
     this.setState({
       success: false
-    })
+    });
   }
+
+  handleDenySubmit() {
+    console.log('Deny');
+  }
+
+  handleRoutineReset() {
+    console.log('Reset');
+  }
+
+  handleRoutineUpdate() {
+    console.log('Update');
+  }
+
+  renderConfirm() {
+    return <Confirmation
+      threeButton="true"
+      message={Constants.workoutsInProgress}
+      denyText={GConstants.cancel}
+      handleDenySubmit={this.handleDenySubmit.bind(this)}
+      optionOneText={GConstants.reset}
+      handleOptionOne={this.handleRoutineReset.bind(this)}
+      optionTwoText={GConstants.update}
+      handleOptionTwo={this.handleRoutineUpdate.bind(this)}
+    />
+  }
+
+  renderInputWithButton() {
+    return (
+     <View style={styles.inputView}>
+      <Text>
+        {this.state.maxChangeMessage}
+      </Text>
+      <InputWithButton
+        value={this.state.weight}
+        handleChange={this.handleChange.bind(this)}
+        handleSubmit={this.handleSubmit.bind(this)}
+        buttonText={GConstants.submit}
+        error={this.state.error}
+        success={this.state.success}
+        message={this.state.message}>
+      </InputWithButton>
+     </View>
+    );
+  }
+
   render() {
+
+    var content;
 
     if (!this.state.loaded) {
       return <Loading />
     }
 
+    if (this.state.confirmChange) {
+      content = this.renderConfirm();
+    } else {
+      content = this.renderInputWithButton();
+    }
+
     return (
       <View style={styles.container}>
-        <Text>
-          {this.state.maxChangeMessage}
-        </Text>
-        <InputWithButton
-          value={this.state.weight}
-          handleChange={this.handleChange.bind(this)}
-          handleSubmit={this.handleSubmit.bind(this)}
-          buttonText={GConstants.submit}
-          error={this.state.error}
-          success={this.state.success}
-          message={this.state.message}>
-        </InputWithButton>
+        {content}
       </View>
     );
   }
@@ -157,6 +220,10 @@ var styles = StyleSheet.create({
   container: {
     padding: 30,
     marginTop: 65,
+    alignItems: 'center'
+  },
+  inputView: {
+    alignSelf: 'stretch',
     alignItems: 'center'
   }
 });
