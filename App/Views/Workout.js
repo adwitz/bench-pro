@@ -89,6 +89,11 @@ class Workout extends Component {
   }
 
   setPressed(set){
+
+    if (this.state.maxChangeMessage) {
+      return;
+    }
+
     if (this.state.lastCompletedSet + 1 === set.index){
       this.markSetComplete(set);
     } else if (this.state.lastCompletedSet === set.index){
@@ -200,9 +205,9 @@ class Workout extends Component {
   getMaxChangeConfirmation(){
     return (
       <Confirm
-        confirmText={Constants.confirm}
+        optionOneText={Constants.confirm}
         denyText={Constants.deny}
-        handleConfirmSubmit={this.setWorkoutCompleteState.bind(this)}
+        handleOptionOne={this.setWorkoutCompleteState.bind(this)}
         handleDenySubmit={this.setWorkoutCompleteState.bind(this)}
         message={this.state.maxChangeMessage}>
       </Confirm>

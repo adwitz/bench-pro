@@ -163,16 +163,18 @@ class SetOneRepMax extends Component {
   }
 
   renderConfirm() {
-    return <Confirmation
-      threeButton="true"
-      message={Constants.workoutsInProgress}
-      denyText={GConstants.cancel}
-      handleDenySubmit={this.handleDenySubmit.bind(this)}
-      optionOneText={GConstants.reset}
-      handleOptionOne={this.handleRoutineReset.bind(this)}
-      optionTwoText={GConstants.update}
-      handleOptionTwo={this.handleRoutineUpdate.bind(this)}
-    />
+    return (
+      <Confirmation
+        threeButtons="true"
+        message={Constants.workoutsInProgress}
+        denyText={GConstants.cancel}
+        handleDenySubmit={this.handleDenySubmit.bind(this)}
+        optionOneText={GConstants.reset}
+        handleOptionOne={this.handleRoutineReset.bind(this)}
+        optionTwoText={GConstants.update}
+        handleOptionTwo={this.handleRoutineUpdate.bind(this)}
+      />
+    );
   }
 
   renderInputWithButton() {

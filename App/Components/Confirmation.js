@@ -15,57 +15,79 @@ class Confirmation extends Component {
     super(props)
   }
 
-  renderThreeButtonConfirm() {
+  renderColumnOne() {
     return (
-      <View style={styles.container}>
-        <Text style={this.message}>{this.props.message}</Text>
-        <View style={styles.buttonFlow}>
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.props.handleDenySubmit}
-            underlayColor="white">
-            <Text style={styles.buttonText}> {this.props.denyText} </Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.props.handleOptionOne}
-            underlayColor="white">
-            <Text style={styles.buttonText}> {this.props.optionOneText} </Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.props.handleOptionTwo}
-            underlayColor="white">
-            <Text style={styles.buttonText}> {this.props.optionTwoText} </Text>
-          </TouchableHighlight>
-        </View>
-      </View>
+      <TouchableHighlight
+        style={styles.button}
+        onPress={this.props.handleDenySubmit}
+        underlayColor="white">
+        <Text style={styles.buttonText}> {this.props.denyText} </Text>
+      </TouchableHighlight>
     );
+  }
+
+  renderColumnTwo(threeButtons) {
+    if (threeButtons) {
+      return this.renderOptionOne();
+    } else {
+      return (
+        <View style={styles.spacer}></View>
+      );
+    }
+  }
+
+  renderColumnThree(threeButtons) {
+    if (threeButtons) {
+      return this.renderOptionTwo();
+    } else {
+      return this.renderOptionOne();
+    }
+  }
+
+  renderOptionOne() {
+    return (
+      <TouchableHighlight
+        style={styles.button}
+        onPress={this.props.handleOptionOne}
+        underlayColor="white">
+        <Text style={styles.buttonText}> {this.props.optionOneText} </Text>
+      </TouchableHighlight>
+    );
+  }
+
+  renderOptionTwo() {
+    return (
+      <TouchableHighlight
+        style={styles.button}
+        onPress={this.props.handleOptionTwo}
+        underlayColor="white">
+        <Text style={styles.buttonText}> {this.props.optionTwoText} </Text>
+      </TouchableHighlight>
+    );
+  }
+
+  renderConfirmationElements() {
+
+    var threeButtons = this.props.threeButtons === 'true';
+
+    return [
+      this.renderColumnOne(),
+      this.renderColumnTwo(threeButtons),
+      this.renderColumnThree(threeButtons)
+    ];
   }
 
   render() {
 
-    if (this.props.threeButton === 'true') {
-      return this.renderThreeButtonConfirm();
-    }
+    var [columnOne, columnTwo, columnThree] = this.renderConfirmationElements();
 
     return (
       <View style={styles.container}>
         <Text style={this.message}>{this.props.message}</Text>
         <View style={styles.buttonFlow}>
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.props.handleDenySubmit}
-            underlayColor="white">
-            <Text style={styles.buttonText}> {this.props.denyText} </Text>
-          </TouchableHighlight>
-          <View style={styles.spacer}></View>
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.props.handleConfirmSubmit}
-            underlayColor="white">
-            <Text style={styles.buttonText}> {this.props.confirmText} </Text>
-          </TouchableHighlight>
+          {columnOne}
+          {columnTwo}
+          {columnThree}
         </View>
       </View>
     );
@@ -97,7 +119,7 @@ var styles = StyleSheet.create({
     borderColor: '#48BBEC',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    margin: 5,
     alignSelf: 'stretch',
     justifyContent: 'center'
   },
