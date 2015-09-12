@@ -30,11 +30,13 @@ class SetOneRepMax extends Component {
       loaded: false
     }
   }
+
   handleChange(event){
     this.setState({
       weight: event.nativeEvent.text
     });
   }
+
   loadUserData() {
     Promise.try(() => {
       return Promise.join(
@@ -110,8 +112,11 @@ class SetOneRepMax extends Component {
 
   setOneRepMax() {
     var weight = this.state.weight;
-    Storage.setOneRepMax(weight)
+    return Storage.setOneRepMax(weight)
       .then(() => this.saveOneRepMaxSuccess(weight))
+      .catch(() => {
+        this.saveOneRepMaxError('Something went wrong please try again');
+      })
       .done();
   }
 
@@ -140,7 +145,8 @@ class SetOneRepMax extends Component {
   setSuccessState(message){
     this.setState({
       error: false,
-      success: message
+      success: message,
+      confirmChange: false
     });
   }
 
@@ -155,6 +161,20 @@ class SetOneRepMax extends Component {
   }
 
   handleRoutineReset() {
+
+    Promise.try(() => {
+      return Promise.join(
+        Storage.clearRoutine(),
+        this.setOneRepMax()
+      );
+    }).then((response) => {
+      this.setSuccessState(Constants.maxSaved);
+      console.log('all is good: ', response);
+    })
+    .catch((err) => {
+      console.log('this better be good:', err);
+    });
+
     console.log('Reset');
   }
 
@@ -206,12 +226,14 @@ class SetOneRepMax extends Component {
 
     if (this.state.confirmChange) {
       content = this.renderConfirm();
+    } else if (this.state.success) {
+      content = (<Text>About time</Text>);
     } else {
       content = this.renderInputWithButton();
     }
 
     return (
-      <View style={styles.container}>
+      <View style={styles.mainContainer}>
         {content}
       </View>
     );
@@ -219,10 +241,13 @@ class SetOneRepMax extends Component {
 }
 
 var styles = StyleSheet.create({
-  container: {
+  mainContainer: {
+    flex: 1,
     padding: 30,
     marginTop: 65,
-    alignItems: 'center'
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#F5FCFF'
   },
   inputView: {
     alignSelf: 'stretch',

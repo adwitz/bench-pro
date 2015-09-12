@@ -75,6 +75,10 @@ var storage = {
       });
   },
 
+  clearRoutine() {
+    return asyncStorage.clearRoutine();
+  },
+
   logLastWorkout(workout){
     asyncStorage.getWorkoutRoutine()
       .then((data) => {

@@ -7,28 +7,40 @@ var {
 } = React;
 
 var asyncStorage = {
-  getOneRepMax(){
+
+  getOneRepMax() {
     return AsyncStorage.getItem('oneRepMax');
   },
-  setOneRepMax(weight){
+
+  setOneRepMax(weight) {
     return AsyncStorage.setItem('oneRepMax', JSON.stringify(weight));
   },
-  getOneRepMaxHistory(){
+
+  getOneRepMaxHistory() {
     return AsyncStorage.getItem('oneRepMaxHistory');
   },
-  setOneRepMaxHistory(history){
+
+  setOneRepMaxHistory(history) {
     return AsyncStorage.setItem('oneRepMaxHistory', JSON.stringify(history));
   },
-  setRoutine(routine){
+
+  setRoutine(routine) {
     return AsyncStorage.setItem('routine', JSON.stringify(routine));
   },
-  getWorkoutRoutine(){
+
+  getWorkoutRoutine() {
     return AsyncStorage.getItem('routine');
   },
-  setLastCompletedWorkoutIndex(workoutNumber){
+
+  clearRoutine() {
+    return AsyncStorage.setItem('routine', JSON.stringify(null));
+  },
+
+  setLastCompletedWorkoutIndex(workoutNumber) {
     return AsyncStorage.setItem('lastCompleted', JSON.stringify(workoutNumber));
   },
-  getLastCompletedWorkoutIndex(){
+
+  getLastCompletedWorkoutIndex() {
     return AsyncStorage.getItem('lastCompleted');
   }
 

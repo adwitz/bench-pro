@@ -16,7 +16,7 @@ var DataStore = {
     });
   },
 
-  setRoutine(routine){
+  setRoutine(routine) {
     this.routine = routine;
     return Storage.updateRoutine(routine);
   },
@@ -30,6 +30,10 @@ var DataStore = {
       .then((routine) => {
         return routine.workouts;
       });
+  },
+
+  clearRoutine() {
+    Storage.clearRoutine();
   },
 
   getOneRepMax(){
@@ -46,8 +50,6 @@ var DataStore = {
   setOneRepMax(weight){
 
     this.oneRepMax = Number(weight);
-
-    //Storage.setOneRepMax
 
   },
 
@@ -84,7 +86,6 @@ var DataStore = {
     }).then(() => {
       refreshWorkoutView();
     }).catch((err) => {
-      console.log('error retrieving message: ', err);
       return {success: false, message: err};
     }).finally(() => {
       return {success: true};
@@ -106,7 +107,6 @@ var DataStore = {
       if (this.lastCompletedWorkout) {
         return this.lastCompletedWorkout;
       } else {
-        console.log('datastore.getLastCompletedWorkout');
         return Storage.getLastCompletedWorkoutIndex();
       }
     })
