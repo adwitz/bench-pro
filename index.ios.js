@@ -70,7 +70,7 @@ class BenchPro extends Component {
       <TabBarIOS>
         <TabBarIOS.Item
           title="Workouts"
-          icon={ require('image!facemash') }
+          icon={ require('image!routine') }
           onPress={ () => this.changeTab('workouts') }
           selected={ this.state.selectedTab === 'workouts' } >
           <View style={ styles.pageView }>
@@ -79,7 +79,7 @@ class BenchPro extends Component {
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Set Max"
-          icon={ require('image!messages') }
+          icon={ require('image!onerepmax') }
           onPress={() => this.changeTab('setOneRepMax')}
           selected={ this.state.selectedTab === 'setOneRepMax' }>
           <View style={ styles.pageView }>
@@ -88,7 +88,7 @@ class BenchPro extends Component {
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Stats"
-          icon={ require('image!settings') }
+          icon={ require('image!stats') }
           onPress={() => this.changeTab('stats')}
           selected={ this.state.selectedTab === 'stats' }>
           <View style={ styles.pageView }>
@@ -97,7 +97,7 @@ class BenchPro extends Component {
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Instructions"
-          icon={ require('image!settings') }
+          icon={ require('image!instructions') }
           onPress={() => this.changeTab('instructions')}
           selected={ this.state.selectedTab === 'instructions' }>
           <View style={ styles.pageView }>
