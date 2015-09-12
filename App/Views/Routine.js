@@ -67,12 +67,24 @@ class Routine extends Component {
       </View>
     );
   }
-  renderWorkout(workout) {
-    var status = this.getStatus(workout);
+
+  getVariablesForWorkout(workout) {
+
     var workouts = this.state.workouts;
-    var nextButton = this.getNextWorkoutElement(workout, workouts);
-    var prevButton = this.getPrevWorkoutElement(workout);
-    var allWorkoutsComplete = this.getBenchProCompletedView(workout);
+
+    var a = [
+      this.getStatus(workout),
+      workouts,
+      this.getNextWorkoutElement(workout, workouts),
+      this.getPrevWorkoutElement(workout),
+      this.getBenchProCompletedView(workout)
+    ];
+    return a;
+  }
+
+  renderWorkout(workout) {
+
+    var [status, workouts, nextButton, prevButton, allWorkoutsComplete] = this.getVariablesForWorkout(workout);
 
     return (
       <View style={styles.mainContainer}>
@@ -97,6 +109,7 @@ class Routine extends Component {
       </View>
     );
   }
+
   getWorkoutsForNav(workouts){
     var result = {};
     workouts.map((workout, index, workouts) => {
@@ -108,6 +121,7 @@ class Routine extends Component {
     });
     return result;
   }
+
   getStatus(workout){
     var result;
     if (workout.completed){
@@ -119,49 +133,63 @@ class Routine extends Component {
     }
     return result;
   }
+
   someSetsCompleted(workout){
     return workout.sets.reduce((previous, set) => {
       return set.completed || previous;
     }, false);
   }
+
   getTextsForStatus(status, button){
     return {
       status: status,
       button: button
     }
   }
+
   getNextWorkoutElement(workout, workouts){
-    return (this.displayNextWorkoutButton(workout, workouts) ?
+    return (
+      this.displayNextWorkoutButton(workout, workouts) ?
       this.createChangeWorkoutWorkoutButton({
         text: 'next',
-        style: styles.changeWorkoutButton,
+        style: {
+          text: styles.alignRight
+        },
         direction: 1
       }) :
       this.createHiddenButtonView()
     );
   }
+
   getPrevWorkoutElement(workout){
-    return (this.displayPrevWorkoutButton(workout) ?
+    return (
+      this.displayPrevWorkoutButton(workout) ?
       this.createChangeWorkoutWorkoutButton({
         text: 'prev',
-        style: styles.changeWorkoutButton,
+        style: {
+          text: styles.alignLeft
+        },
         direction: -1
       }) :
       this.createHiddenButtonView()
     );
   }
+
   displayNextWorkoutButton(workout, workouts) {
     return workout.id < workouts.length - 1 ? true : false;
   }
+
   displayPrevWorkoutButton(workout, workouts) {
     return workout.id === 0 ? false : true;
   }
+
   getBenchProCompletedView(workout) {
     if (this.isCompleteFinalWorkout(workout)) {
       return this.createResetWorkoutButton();
     }
     return BPLib.createEmptyView();
   }
+
   createResetWorkoutButton() {
     return (
       <View>
@@ -169,34 +197,44 @@ class Routine extends Component {
       </View>
     );
   }
+
   isCompleteFinalWorkout(workout, workouts) {
     return workout.completed && this.isFinalWorkout(workout, workouts);
   }
+
   isFinalWorkout(workout, workouts) {
     workouts = workouts || this.state.workouts;
     return workout.id === workouts.length - 1;
   }
+
   finalWorkoutIsCompleted() {
     return this.isFinalWorkout(workout) && workout.completed;
   }
+
   isNextWorkout(workout, result) {
     return workout.completed === false && !result.current;
   }
+
   createChangeWorkoutWorkoutButton(config){
     return (
       <TouchableHighlight
         underlayColor="#F5FCFF"
-        style={config.style}
+        style={styles.changeWorkoutButton}
         onPress={this.changeWorkout.bind(this, config.direction)}>
-        <Text>{config.text}</Text>
+        <Text
+          style={config.style.text}>
+          {config.text}
+        </Text>
       </TouchableHighlight>
     );
   }
+
   createHiddenButtonView(){
     return (
       <View style={styles.changeButtonSpacer1}></View>
     );
   }
+
   changeWorkout(direction){
     var currentWorkoutIndex = this.state.workoutNav.current.id;
     var newWorkoutIndex = currentWorkoutIndex + direction;
@@ -209,9 +247,11 @@ class Routine extends Component {
       }
     });
   }
+
   triggerDataRefresh(){
     this.loadWorkouts();
   }
+
   workoutSelected(){
     var workout = this.state.workoutNav.current;
     this.props.navigator.push({
@@ -268,6 +308,12 @@ var styles = StyleSheet.create({
   changeWorkoutButton: {
     justifyContent: 'center',
     flex: 1
+  },
+  alignLeft: {
+    textAlign: 'left'
+  },
+  alignRight: {
+    textAlign: 'right'
   },
   changeButtonSpacer1: {
     flex:1
