@@ -273,8 +273,7 @@ class Workout extends Component {
     var timer = this.state.runTimer ? <Timer duration="10" run={this.state.runTimer} id={this.state.lastCompletedSet}/> : BPLib.createEmptyView();
 
     return (
-      <View
-        style={styles.mainContainer}>
+      <View style={styles.mainContainer}>
         <View style={styles.top}>
           {failureRepInput}
           {confirmation}

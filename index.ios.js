@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react-native');
-var Home = require('./App/Views/Home');
 var Routine = require('./App/Views/Routine');
 var SetOneRepMax = require('./App/Views/SetOneRepMax');
 var Instructions = require('./App/Views/Instructions');
@@ -57,7 +56,8 @@ class BenchPro extends Component {
           title: 'Workout',
           component: Routine,
           passProps: {
-            loaded: this.state.loaded
+            loaded: this.state.loaded,
+            refresh: Math.random(1)
           }
         }}
       />
@@ -66,6 +66,7 @@ class BenchPro extends Component {
   render() {
 
     var loadingOrRoutineView = this.state.loaded ? this.createRoutineView() : <Loading />
+
     return (
       <TabBarIOS>
         <TabBarIOS.Item
@@ -80,7 +81,7 @@ class BenchPro extends Component {
         <TabBarIOS.Item
           title="Set Max"
           icon={ require('image!onerepmax') }
-          onPress={() => this.changeTab('setOneRepMax')}
+          onPress={ () => this.changeTab('setOneRepMax') }
           selected={ this.state.selectedTab === 'setOneRepMax' }>
           <View style={ styles.pageView }>
             <SetOneRepMax />
@@ -89,7 +90,7 @@ class BenchPro extends Component {
         <TabBarIOS.Item
           title="Stats"
           icon={ require('image!stats') }
-          onPress={() => this.changeTab('stats')}
+          onPress={ () => this.changeTab('stats') }
           selected={ this.state.selectedTab === 'stats' }>
           <View style={ styles.pageView }>
             <Stats />
@@ -98,7 +99,7 @@ class BenchPro extends Component {
         <TabBarIOS.Item
           title="Instructions"
           icon={ require('image!instructions') }
-          onPress={() => this.changeTab('instructions')}
+          onPress={ () => this.changeTab('instructions') }
           selected={ this.state.selectedTab === 'instructions' }>
           <View style={ styles.pageView }>
             <Instructions />

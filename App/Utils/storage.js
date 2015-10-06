@@ -3,11 +3,11 @@
 var React = require('react-native');
 var asyncStorage = require('./asyncStorage');
 var benchData = require('./benchData');
+var PubSub = require('./PubSub');
 
 var storage = {
 
   setOneRepMax(weight){
-    weight = weight.trim();
     this.addToOneRepMaxHistory(weight);
     return asyncStorage.setOneRepMax(weight);
   },
@@ -48,9 +48,10 @@ var storage = {
   },
 
   setRoutineForOneRepMax(weight){
-    benchData.getRoutine(weight)
+    return benchData.getRoutine(weight)
       .then((routine) => asyncStorage.setRoutine(routine))
       .then(() => {
+        PubSub.publish('loadWorkouts');
         console.log('successfully set routine');
       })
       .done();

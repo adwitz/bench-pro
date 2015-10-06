@@ -112,17 +112,16 @@ class SetOneRepMax extends Component {
 
   setOneRepMax() {
     var weight = this.state.weight;
-    return Storage.setOneRepMax(weight)
+    return DataStore.setOneRepMax(weight)
       .then(() => this.saveOneRepMaxSuccess(weight))
       .catch(() => {
         this.saveOneRepMaxError('Something went wrong please try again');
-      })
-      .done();
+      });
   }
 
   saveOneRepMaxSuccess(weight){
     this.setSuccessState(Constants.maxSaved);
-    DataStore.setRoutineForOneRepMax(weight);
+    return DataStore.setRoutineForOneRepMax(weight);
   }
 
   saveOneRepMaxError(err){
@@ -164,18 +163,16 @@ class SetOneRepMax extends Component {
 
     Promise.try(() => {
       return Promise.join(
-        Storage.clearRoutine(),
+        DataStore.clearRoutine(),
         this.setOneRepMax()
       );
     }).then((response) => {
       this.setSuccessState(Constants.maxSaved);
-      console.log('all is good: ', response);
     })
     .catch((err) => {
       console.log('this better be good:', err);
     });
 
-    console.log('Reset');
   }
 
   handleRoutineUpdate() {

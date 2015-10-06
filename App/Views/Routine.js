@@ -7,6 +7,7 @@ var Loading = require('./Loading');
 var DataStore = require('../Data/DataStore.js');
 var Constants = require('../Utils/Constants.js').Routine;
 var BPLib = require('../Utils/BenchProLib');
+var PubSub = require('../Utils/PubSub');
 
 var {
   StyleSheet,
@@ -23,16 +24,26 @@ class Routine extends Component {
   constructor(props){
     super(props);
     this.loadWorkouts();
+    this.addSubscriptions();
     this.state = {
       loaded: false
     }
   }
+
   loadWorkouts(){
     DataStore.getRoutine()
       .then((res) => this.handleResponse(res))
       .catch((err) => console.log(err))
       .done();
   }
+
+  addSubscriptions() {
+    PubSub.subscribe('loadWorkouts', function() {
+      this.props.navigator.pop();
+      this.loadWorkouts();
+    }.bind(this));
+  }
+
   handleResponse(res){
     if (res){
       this.setState({
@@ -46,18 +57,9 @@ class Routine extends Component {
   setLoadedState(state) {
     this.setState({
       loaded: state
-    })
+    });
   }
-  render() {
-    if (!this.state.loaded) {
-      return <Loading />;
-    } else if (this.state.workoutNav) {
-      return this.renderWorkout(this.state.workoutNav.current);
-    } else {
-      return this.renderOneRepMaxNotSet();
-    }
 
-  }
   renderOneRepMaxNotSet() {
     return (
       <View style={styles.mainContainer}>
@@ -72,14 +74,14 @@ class Routine extends Component {
 
     var workouts = this.state.workouts;
 
-    var a = [
+    var workoutVariables = [
       this.getStatus(workout),
       workouts,
       this.getNextWorkoutElement(workout, workouts),
       this.getPrevWorkoutElement(workout),
       this.getBenchProCompletedView(workout)
     ];
-    return a;
+    return workoutVariables;
   }
 
   renderWorkout(workout) {
@@ -248,10 +250,6 @@ class Routine extends Component {
     });
   }
 
-  triggerDataRefresh(){
-    this.loadWorkouts();
-  }
-
   workoutSelected(){
     var workout = this.state.workoutNav.current;
     this.props.navigator.push({
@@ -259,9 +257,20 @@ class Routine extends Component {
       component: Workout,
       passProps: {
         workout: workout,
-        triggerDataRefresh: this.triggerDataRefresh.bind(this)
+        triggerDataRefresh: this.loadWorkouts.bind(this)
       }
     });
+  }
+
+  render() {
+    if (!this.state.loaded) {
+      return <Loading />;
+    } else if (this.state.workoutNav) {
+      return this.renderWorkout(this.state.workoutNav.current);
+    } else {
+      return this.renderOneRepMaxNotSet();
+    }
+
   }
 }
 

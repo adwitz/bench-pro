@@ -22,7 +22,7 @@ var DataStore = {
   },
 
   setRoutineForOneRepMax(weight) {
-    Storage.setRoutineForOneRepMax(weight);
+    return Storage.setRoutineForOneRepMax(weight);
   },
 
   getWorkouts(){
@@ -33,6 +33,7 @@ var DataStore = {
   },
 
   clearRoutine() {
+    this.routine = null;
     Storage.clearRoutine();
   },
 
@@ -48,8 +49,8 @@ var DataStore = {
   },
 
   setOneRepMax(weight){
-
-    this.oneRepMax = Number(weight);
+    this.oneRepMax = weight = Number(weight.trim());
+    return Storage.setOneRepMax(this.oneRepMax);
 
   },
 
