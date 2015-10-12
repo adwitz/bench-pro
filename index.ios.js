@@ -20,6 +20,7 @@ var {
 
 class BenchPro extends Component {
   constructor(props){
+    super()
     this.loadWorkouts();
     this.state = {
       selectedTab: 'workouts',
